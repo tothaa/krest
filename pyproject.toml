@@ -1,0 +1,78 @@
+[build-system]
+requires = ["setuptools", "wheel", "twine"]
+build-backend = "setuptools.build_meta"
+#requires = ["uv_build"]
+#build-backend = "uv_build"
+
+[project]
+name = "krest"
+version = "1.0.0"
+description = "KREST - call REST endpoints with faith"
+requires-python = ">=3.11"
+authors = [
+    {name = "András Tóth", email = "tothaa@outlook.com"}
+]
+license = {file = 'LICENSE'}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: GNU General Public License v2.0",
+    "Intended Audience :: Developers",
+    "Topic :: Utilities",
+    "Programming Language :: Python",
+    "Operating System :: POSIX :: Linux",
+]
+dependencies = [
+    "httpx[http2]",
+    "cryptography",
+    "textual[syntax]",
+]
+
+[project.scripts]
+krest = "krest.krest_tui:main"
+#krest = "krest.krest_qt:main"
+krest-tui = "krest.krest_tui:tui"
+krest-qt = "krest.krest_qt:main"
+krest-gui = "krest.krest_qt:main"
+
+[tool.setuptools]
+packages = ["krest"]
+package-dir = {krest = "src"}
+include-package-data = true
+
+[tool.setuptools.data-files]
+"share/applications" = ["org.kde.krest.desktop", "src/krest_tui.tcss"]
+
+[project.optional-dependencies]
+dev = [
+    "wheel",
+    "setuptools",
+    "twine",
+]
+test = [
+    "pytest",
+    "pytest-cov",
+    "pytest-benchmark",
+    "pytest-sugar",
+    "pytest-flake8",
+    "flake8-pytest-style",
+    "flake8-bugbear",
+    "flake8-annotations",
+    "pygal",
+    "dotenv",
+]
+
+[tool.coverage.run]
+source = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = "tests"
+pythonpath = "."
+norecursedirs = [
+    ".vscode",
+    "__pycache__"
+]
+addopts = "-s --cache-clear --flake8 src tests --benchmark-compare --benchmark-save-data --benchmark-autosave --durations=10 --cov --cov-report html --cov-report term-missing --cov-fail-under 95"
+#addopts = "--cache-clear -s -p no:benchmark -p no:pytest_cov --durations=10 -o log_cli=true --log-level=DEBUG"
+
+[tool.setuptools.dynamic]
+readme = {file = ["README.md"]}

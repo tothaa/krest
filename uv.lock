@@ -587,8 +587,8 @@ wheels = [
 ]
 
 [[package]]
-name = "krest"
-version = "1.0.0"
+name = "krest-utils"
+version = "1.0.1"
 source = { editable = "." }
 dependencies = [
     { name = "cryptography" },

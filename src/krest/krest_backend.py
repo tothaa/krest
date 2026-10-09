@@ -114,7 +114,7 @@ CREDENTIAL_TYPES = [credential.value for credential in CredentialType]
 METHODS = [method.value for method in Method]
 EMPTY_FILE_DATA = {
             "application": "krest",
-            "version": version("krest"),
+            "version": version("krest-utils"),
             "settings": {"is_backup_enabled": True},
             "max_endpoint_id": -1,
             "max_credential_id": -1,

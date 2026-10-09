@@ -116,7 +116,7 @@ class About(ModalScreen):
             yield Label(t(t.ABOUT), classes="title")
             yield Static(ASCII_LOGO, classes="ascii-logo")
             #yield Label("Krest TUI", classes="about-app-name")
-            yield Label(f"v{version('krest')}", classes="version-tag")
+            yield Label(f"v{version('krest-utils')}", classes="version-tag")
             yield Label(t(t.MOTTO), classes="tagline")
 
             yield Static("", classes="separator")
@@ -124,9 +124,13 @@ class About(ModalScreen):
             yield Label("[b]" + t(t.EMAIL) + ":[/b] tothaa@hotmail.com")
             yield Label("[b]" + t(t.LICENSE) + ":[/b] GNU GPL v2.0")
             yield Label("[b]GitHub:[/b] [blue] https://github.com/tothaa/krest [/blue]")
+            yield Label("[b]Donate:[/b]")
+            yield Label("[b]Donate via 4Fund:[/b] [blue] https://4fund.com/hu/vhynh2 [/blue]")
+            yield Label("Alternatives:")
             yield Label("[b]Donate via GitHub:[/b] [blue] https://github.com/sponsors/tothaa [/blue]")
             yield Label("[b]Donate via Librepay:[/b] [blue] https://liberapay.com/tothaa [/blue]")
             yield Label("[b]Donate via ko-fi:[/b] [blue] https://ko-fi.com/tothaa [/blue]")
+            yield Label("[b]Donate via PayPal:[/b] [blue] https://paypal.me/tothaaprojects [/blue]")
             yield Static("", classes="separator")
             yield Label("Powered by [bold magenta]Textual[/bold magenta] and [bold blue]httpx[/bold blue]", classes="credits")
 
@@ -1000,7 +1004,7 @@ class KrestTui(App):
     @on(events.Mount)
     def update_screen_title(self) -> None:
         self.title = "Krest TUI"
-        self.sub_title = t(t.MOTTO) + f"  (v{version('krest')}) "
+        self.sub_title = t(t.MOTTO) + f"  (v{version('krest-utils')}) "
 
     @on(DataTable.RowSelected, "#endpoints_data_table")
     def update_selected_row(self, event: DataTable.RowSelected):
@@ -1284,6 +1288,8 @@ def tui():
         gc.collect()
     # logging.info('TUI: End.')
 
+def main():
+    tui()
 
 if __name__ == "__main__":
     tui()

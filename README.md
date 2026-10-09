@@ -15,7 +15,7 @@ The pip will also automatically install the other dependencies: httpx, cryptogra
 
 ## Installation
 Install from https://pypi.org/ central repository:
-> pip install krest
+> pip install krest-utils
 
 ## Running the Application
 > krest
@@ -33,10 +33,12 @@ Install from https://pypi.org/ central repository:
 * Donate:
   Say thank you with a tip to the developer. 
   Donations also motivate me to spend more time on Enhancements and Bugfixes.
+  + 4Fund - https://4fund.com/hu/vhynh2
+  Alternatives:
   + GitHub Sponsors - https://github.com/sponsors/tothaa
-  alternatively:
   + Librepay - https://liberapay.com/tothaa
-  + ko-fi: https://ko-fi.com/tothaa
+  + ko-fi - https://ko-fi.com/tothaa
+  + PayPal - https://paypal.me/tothaaprojects
 
 ## Roadmap
 ### Done

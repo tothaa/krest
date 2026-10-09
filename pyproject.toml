@@ -5,20 +5,20 @@ build-backend = "setuptools.build_meta"
 #build-backend = "uv_build"
 
 [project]
-name = "krest"
-version = "1.0.0"
+name = "krest-utils"
+version = "1.0.1"
 description = "KREST - call REST endpoints with faith"
 requires-python = ">=3.11"
 authors = [
     {name = "András Tóth", email = "tothaa@outlook.com"}
 ]
-license = {file = 'LICENSE'}
+license = "GPL-2.0-only"
+license-files = ["LICENSE"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    "License :: OSI Approved :: GNU General Public License v2.0",
     "Intended Audience :: Developers",
     "Topic :: Utilities",
-    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
     "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
@@ -28,19 +28,19 @@ dependencies = [
 ]
 
 [project.scripts]
-krest = "krest.krest_tui:main"
+krest = "krest.krest_tui:tui"
 #krest = "krest.krest_qt:main"
 krest-tui = "krest.krest_tui:tui"
-krest-qt = "krest.krest_qt:main"
-krest-gui = "krest.krest_qt:main"
+#krest-qt = "krest.krest_qt:main"
+#krest-gui = "krest.krest_qt:main"
 
 [tool.setuptools]
 packages = ["krest"]
-package-dir = {krest = "src"}
+package-dir = {"" = "src"}
 include-package-data = true
 
 [tool.setuptools.data-files]
-"share/applications" = ["org.kde.krest.desktop", "src/krest_tui.tcss"]
+"share/applications" = ["src/krest/krest_tui.tcss"]
 
 [project.optional-dependencies]
 dev = [

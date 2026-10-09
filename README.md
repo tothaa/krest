@@ -15,7 +15,7 @@ The pip will also automatically install the other dependencies: httpx, cryptogra
 
 ## Installation
 Install from https://pypi.org/ central repository:
-> pip install krest-utils
+> python -m pip install krest-utils
 
 ## Running the Application
 > krest

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import importlib.util
 import json
 from pathlib import Path

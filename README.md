@@ -1,5 +1,5 @@
 # KREST - call REST endpoints with faith
-KREST is a lightweight desktop application for testing and invoking HTTP-based web services.
+KREST is a lightweight desktop application for testing and invoking HTTP-based web services. <br /><br />
 
 
 It is a free and open-source (GPLv2) tool that stores your data locally and encrypted at-rest.
@@ -9,11 +9,12 @@ Designed for developers with good intentions who value simplicity, privacy and i
 KREST utilizes the `httpx` python package within a user-friendly interface. It provides a Workspace to organize your API requests without the bloat of enterprise suites.
 
 
-## Dependencies
+## Installation
+### Dependencies
 You need to have python and pip installed on your system (https://www.python.org/).
 The pip will also automatically install the other dependencies: httpx, cryptography, textual.
 
-## Installation
+### Install from PyPi
 Install from https://pypi.org/ central repository:
 > pip install krest-utils
 
@@ -27,14 +28,26 @@ Install from https://pypi.org/ central repository:
 * Endpoint Management: specify and organize your API-request details and Credentials for re-use.
 * Call History: analyze your previous requests and API responses.
 
+## Guides and Demos
+Check the youtube channel: 
+  https://www.youtube.com/channel/UCemj-6NUaVcvaa-GbVCc5Ug
+* Disclaimer and About the Krest Project (Part 1)
+* TUI - Managing the Project Files (Part 2)
+* TUI - Managing Credentials (Part 3)
+* TUI - Managing Endpoints (Part 4)
+* TUI - Calling Endpoints (Part 5)
+
 ## Supporting my Work
-* Submit bug reports - https://github.com/tothaa/krest/issues
-* Contribute to the code - https://github.com/tothaa/krest
+* Submit bug reports       - https://github.com/tothaa/krest/issues
+* Contribute to the code   - https://github.com/tothaa/krest
 * Donate:
-  Say thank you with a tip to the developer. 
+
+  Say thank you with a tip to the developer.
+
   Donations also motivate me to spend more time on Enhancements and Bugfixes.
   + 4Fund - https://4fund.com/hu/vhynh2
-  Alternatives:
+
+  ***Alternatives***
   + GitHub Sponsors - https://github.com/sponsors/tothaa
   + Librepay - https://liberapay.com/tothaa
   + ko-fi - https://ko-fi.com/tothaa
@@ -73,11 +86,3 @@ minimal backend, minimal TUI
 ### Not Doing
 * ~~cloud sync~~
 
-## Guides and Demos
-Check the youtube channel: 
-  https://www.youtube.com/channel/UCemj-6NUaVcvaa-GbVCc5Ug
-* Disclaimer and About the Krest Project (Part 1)
-* TUI - Managing the Project Files (Part 2)
-* TUI - Managing Credentials (Part 3)
-* TUI - Managing Endpoints (Part 4)
-* TUI - Calling Endpoints (Part 5)

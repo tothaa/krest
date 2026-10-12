@@ -1,1 +1,2 @@
-include src/qml/*.qml
+include src/krest/qml/*.qml
+include src/krest/locales/*.json

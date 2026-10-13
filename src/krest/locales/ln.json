@@ -79,7 +79,6 @@
   "BROWSE": "Luka",
   "PASSWORD": "Liloba ya kobombama",
   "TOKEN_URL": "URL ya token",
-  "SCOPE": "Etando",
   "CLIENT_ID": "ID ya kliyá",
   "CLIENT_SECRET": "Fungola ya sekele ya kliyá",
   "CREDENTIAL_EDITOR": "Mobongisi ya makambo ya kokɔta",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Fisyɛ ezali liboso mpe bakomela yango lisusu. Olingi kokoba?",
   "FILE_LOADED": "Fisyɛ ekɔtisami: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Tambwisa makambo ya kokɔta",
-  "USERNAME": "Nkombo ya osaleli"
+  "USERNAME": "Nkombo ya osaleli",
+  "FILE": "Fisyɛ"
 }

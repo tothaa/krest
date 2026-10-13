@@ -79,7 +79,6 @@
   "BROWSE": "Wá kiri",
   "PASSWORD": "Ọ̀rọ̀ìṣínà",
   "TOKEN_URL": "URL Tókùn",
-  "SCOPE": "Ààyè (Scope)",
   "CLIENT_ID": "ID Oníbàárà",
   "CLIENT_SECRET": "Àṣírí Oníbàárà",
   "CREDENTIAL_EDITOR": "Olóòtú Ìdánimọ̀",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Fáìlì ti wà tẹ́lẹ̀, a ó sì kọ sínú rẹ̀. Ṣé o fẹ́ tẹ̀síwájú?",
   "FILE_LOADED": "A ti gbé fáìlì jáde: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Ṣakoso awọn iwe-ẹri",
-  "USERNAME": "Orukọ olumulo"
+  "USERNAME": "Orukọ olumulo",
+  "FILE": "Fáìlì"
 }

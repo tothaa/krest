@@ -79,7 +79,6 @@
   "BROWSE": "Tallózás",
   "PASSWORD": "Jelszó",
   "TOKEN_URL": "Token URL",
-  "SCOPE": "Hatókör (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Hitelesítő adat szerkesztő",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "A fájl már létezik és felül lesz írva. Folytatja?",
   "FILE_LOADED": "Fájl betöltve: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Hitelesítési adatok kezelése",
-  "USERNAME": "Felhasználónév"
+  "USERNAME": "Felhasználónév",
+  "FILE": "Fájl"
 }

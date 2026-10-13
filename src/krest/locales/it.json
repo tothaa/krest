@@ -79,7 +79,6 @@
   "BROWSE": "Sfoglia",
   "PASSWORD": "Password",
   "TOKEN_URL": "URL Token",
-  "SCOPE": "Ambito (Scope)",
   "CLIENT_ID": "ID Client",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Editor credenziali",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Il file esiste già e verrà sovrascritto. Vuoi continuare?",
   "FILE_LOADED": "File caricato: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Gestisci credenziali",
-  "USERNAME": "Nome utente"
+  "USERNAME": "Nome utente",
+  "FILE": "File"
 }

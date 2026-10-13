@@ -79,7 +79,6 @@
   "BROWSE": "Broùsaich",
   "PASSWORD": "Facal-faire",
   "TOKEN_URL": "URL Tòcan",
-  "SCOPE": "Sgòp (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Deasaiche Teisteanais",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Tha am faidhle ann mu thràth agus thèid sgrìobhadh thairis air. Lean air adhart?",
   "FILE_LOADED": "Faidhle air a luchdachadh: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Sgrùdaich teisteanasan",
-  "USERNAME": "Ainm-cleachdaiche"
+  "USERNAME": "Ainm-cleachdaiche",
+  "FILE": "Faidhle"
 }

@@ -79,7 +79,6 @@
   "BROWSE": "Ṱolani",
   "PASSWORD": "Phasiwede",
   "TOKEN_URL": "URL ya token",
-  "SCOPE": "Tshikalo",
   "CLIENT_ID": "ID ya muthengi",
   "CLIENT_SECRET": "Khii ya tshiphiri ya muthengi",
   "CREDENTIAL_EDITOR": "Mudzudzanyi wa mafhungo a u dzhena",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Faela yo no vha hone nahone i ḓo ṅwalwa hafhu. Ni ṱoḓa u bvela phanḓa?",
   "FILE_LOADED": "Faela yo dzheniswa: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Langani mafhungo a u dzhena",
-  "USERNAME": "Dzina ḽa mushumisi"
+  "USERNAME": "Dzina ḽa mushumisi",
+  "FILE": "Faela"
 }

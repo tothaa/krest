@@ -79,7 +79,6 @@
   "BROWSE": "Viečča",
   "PASSWORD": "Beassansátni",
   "TOKEN_URL": "Token URL",
-  "SCOPE": "Scope",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Credential-redakteur",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Fiila lea juo gávdnamis ja boahtá biddjot badjelii. Joatkkát go?",
   "FILE_LOADED": "Fiila lea viežžojuvvon: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Hálddaš duođaštusaid",
-  "USERNAME": "Geavaheaddjenamma"
+  "USERNAME": "Geavaheaddjenamma",
+  "FILE": "Fiila"
 }

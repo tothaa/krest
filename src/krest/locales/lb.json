@@ -79,7 +79,6 @@
   "BROWSE": "Duerchsichen",
   "PASSWORD": "Passwuert",
   "TOKEN_URL": "Token URL",
-  "SCOPE": "Scope",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Umeldungsinformatiounen Editor",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Datei existéiert scho gëtt iwwerschriwwen. Weiderfueren?",
   "FILE_LOADED": "Datei gelueden: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Umeldungsinformatioune verwalten",
-  "USERNAME": "Benotzernumm"
+  "USERNAME": "Benotzernumm",
+  "FILE": "Datei"
 }

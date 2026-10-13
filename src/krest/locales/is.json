@@ -79,7 +79,6 @@
   "BROWSE": "Fletta",
   "PASSWORD": "Lykilorð",
   "TOKEN_URL": "URL tóka",
-  "SCOPE": "Gildissvið (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Auðkennaritill",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Skrá er þegar til og verður skrifað yfir hana. Halda áfram?",
   "FILE_LOADED": "Skrá hlaðin: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Sýsla með skilríki",
-  "USERNAME": "Notandanafn"
+  "USERNAME": "Notandanafn",
+  "FILE": "Skrá"
 }

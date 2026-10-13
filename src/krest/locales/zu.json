@@ -79,7 +79,6 @@
   "BROWSE": "Phequlula",
   "PASSWORD": "Iphasiwedi",
   "TOKEN_URL": "URL yethokheni",
-  "SCOPE": "Ububanzi",
   "CLIENT_ID": "ID yeklayenti",
   "CLIENT_SECRET": "Ukhiye oyimfihlo weklayenti",
   "CREDENTIAL_EDITOR": "Umhleli wemininingwane yokungena",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Ifayela selivele likhona futhi lizobhalwa ngaphezulu. Ufuna ukuqhubeka?",
   "FILE_LOADED": "Ifayela lilayishiwe: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Phatha imininingwane yokungena",
-  "USERNAME": "Igama lomsebenzisi"
+  "USERNAME": "Igama lomsebenzisi",
+  "FILE": "Ifayela"
 }

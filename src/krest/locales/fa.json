@@ -79,7 +79,6 @@
   "BROWSE": "جستجو",
   "PASSWORD": "رمز عبور",
   "TOKEN_URL": "URL توکن",
-  "SCOPE": "محدوده (Scope)",
   "CLIENT_ID": "شناسه کلاینت",
   "CLIENT_SECRET": "رمز کلاینت",
   "CREDENTIAL_EDITOR": "ویرایشگر اعتبارنامه",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "فایل از قبل وجود دارد و جایگزین خواهد شد. آیا مایل به ادامه هستید؟",
   "FILE_LOADED": "فایل بارگذاری شد: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "مدیریت اعتبارنامه ها",
-  "USERNAME": "نام کاربری"
+  "USERNAME": "نام کاربری",
+  "FILE": "فایل"
 }

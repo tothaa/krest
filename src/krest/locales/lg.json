@@ -79,7 +79,6 @@
   "BROWSE": "Noonya",
   "PASSWORD": "Ekigambo eky'ekyama",
   "TOKEN_URL": "URL ya token",
-  "SCOPE": "Ekkomo",
   "CLIENT_ID": "ID ya kasitoma",
   "CLIENT_SECRET": "Ekisumuluzo eky'ekyama ekya kasitoma",
   "CREDENTIAL_EDITOR": "Omulongoosa ebikwata ku kuyingira",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Fayiro weeri dda era ejja kuwandiikibwako obuggya. Oyagala okweyongerayo?",
   "FILE_LOADED": "Fayiro etikkiddwa: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Ddukanya ebikwata ku kuyingira",
-  "USERNAME": "Erinnya ly'omukozesa"
+  "USERNAME": "Erinnya ly'omukozesa",
+  "FILE": "Fayiro"
 }

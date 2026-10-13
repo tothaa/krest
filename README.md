@@ -21,6 +21,8 @@ Install from https://pypi.org/ central repository:
 ## Running the Application
 > krest
 
+Use --debug or -d for saving run logs into krest.log file. Note: you might save sensitive info to the log file, delete the log file after use.
+
 ## Features
 * TUI: text-based user interfaces included to run the application with minimal dependencies.
   > krest-tui
@@ -58,7 +60,7 @@ Check the youtube channel:
 minimal backend, minimal TUI
 
 ### Next
-* [ ] code quality: improved logging, log-level settings into project file
+* [x] code quality: improved logging, log-level settings ~~~into project file~~~ command line parameter
 * [ ] code quality: update developer test cases, review type annotations
 * [ ] GUI: adding KDE/Kirigami Qt-based ui implementation
 * [ ] TUI: filter, sort of Endpoints, Credentials, History

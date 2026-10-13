@@ -79,7 +79,6 @@
   "BROWSE": "Pārlūkot",
   "PASSWORD": "Parole",
   "TOKEN_URL": "Token URL",
-  "SCOPE": "Darbības joma (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Akreditācijas datu redaktors",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Fails jau eksistē un tiks pārrakstīts. Turpināt?",
   "FILE_LOADED": "Fails ielādēts: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Pārvaldīt akreditācijas datus",
-  "USERNAME": "Lietotājvārds"
+  "USERNAME": "Lietotājvārds",
+  "FILE": "Fails"
 }

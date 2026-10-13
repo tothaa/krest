@@ -79,7 +79,6 @@
   "BROWSE": "تصفح",
   "PASSWORD": "كلمة المرور",
   "TOKEN_URL": "رابط الرمز",
-  "SCOPE": "النطاق",
   "CLIENT_ID": "معرف العميل",
   "CLIENT_SECRET": "سر العميل",
   "CREDENTIAL_EDITOR": "محرر الاعتمادات",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "الملف موجود بالفعل وسيتم استبداله. هل تريد الاستمرار؟",
   "FILE_LOADED": "تم تحميل الملف: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "إدارة بيانات الاعتماد",
-  "USERNAME": "اسم المستخدم"
+  "USERNAME": "اسم المستخدم",
+  "FILE": "ملف"
 }

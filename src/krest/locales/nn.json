@@ -79,7 +79,6 @@
   "BROWSE": "Bla gjennom",
   "PASSWORD": "Passord",
   "TOKEN_URL": "Token URL",
-  "SCOPE": "Scope",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Legitimasjons-redigering",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Fila eksisterer allereie og vil bli overskriven. Halda fram?",
   "FILE_LOADED": "Fil lasta: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Administrer legitimasjon",
-  "USERNAME": "Brukarnamn"
+  "USERNAME": "Brukarnamn",
+  "FILE": "Fil"
 }

@@ -79,7 +79,6 @@
   "BROWSE": "બ્રાઉઝ",
   "PASSWORD": "પાસવર્ડ",
   "TOKEN_URL": "ટોકન URL",
-  "SCOPE": "સ્કોપ",
   "CLIENT_ID": "ક્લાયંટ ID",
   "CLIENT_SECRET": "ક્લાયંટ સિક્રેટ",
   "CREDENTIAL_EDITOR": "ઓળખપત્ર એડિટર",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "ફાઇલ પહેલેથી અસ્તિત્વમાં છે અને તે ઓવરરાઇટ થશે. શું તમે ચાલુ રાખવા માંગો છો?",
   "FILE_LOADED": "ફાઇલ લોડ થઈ: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "ઓળખપત્રો સંચાલિત કરો",
-  "USERNAME": "વપરાશકર્તા નામ"
+  "USERNAME": "વપરાશકર્તા નામ",
+  "FILE": "ફાઇલ"
 }

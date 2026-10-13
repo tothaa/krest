@@ -79,7 +79,6 @@
   "BROWSE": "Kotéktak",
   "PASSWORD": "Kecap sandi",
   "TOKEN_URL": "URL Token",
-  "SCOPE": "Scope",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Éditor Krédénsial",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "File parantos aya sareng bakal ditindih. Teraskeun?",
   "FILE_LOADED": "File parantos dimuat: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Atur kredénsial",
-  "USERNAME": "Ngaran pamaké"
+  "USERNAME": "Ngaran pamaké",
+  "FILE": "File"
 }

@@ -79,7 +79,6 @@
   "BROWSE": "Telusuri",
   "PASSWORD": "Sandhi",
   "TOKEN_URL": "URL Token",
-  "SCOPE": "Scope",
   "CLIENT_ID": "ID Klien",
   "CLIENT_SECRET": "Secret Klien",
   "CREDENTIAL_EDITOR": "Editor Kredensial",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "File wis ana lan bakal ditumpangi (overwrite). Terusake?",
   "FILE_LOADED": "File dimuat: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Ngatur kredensial",
-  "USERNAME": "Jeneng pangguna"
+  "USERNAME": "Jeneng pangguna",
+  "FILE": "File"
 }

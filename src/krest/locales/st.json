@@ -79,7 +79,6 @@
   "BROWSE": "Batla",
   "PASSWORD": "Phasewete",
   "TOKEN_URL": "URL ya token",
-  "SCOPE": "Sebaka sa tumello",
   "CLIENT_ID": "ID ya moreki",
   "CLIENT_SECRET": "Senotlolo sa sephiri sa moreki",
   "CREDENTIAL_EDITOR": "Mohlophisi wa dintlha tsa ho kena",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Faele e se e ntse e le teng mme e tla ngolwa hape. Na o batla ho tswela pele?",
   "FILE_LOADED": "Faele e laetswe: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Laola dintlha tsa ho kena",
-  "USERNAME": "Lebitso la mosebedisi"
+  "USERNAME": "Lebitso la mosebedisi",
+  "FILE": "Faele"
 }

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+from pathlib import Path
 import json
 import shutil
 # import time
@@ -9,6 +10,7 @@ from typing import Callable, List, Dict, Optional, Any, Self
 from enum import Enum
 from datetime import datetime
 from importlib.metadata import version
+import logging
 import secrets
 import httpx
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -21,6 +23,16 @@ print(t(t.REPLY_NAME, name=t(t.K_USER))) # testing i18n solution
 def developer_log(message):
     with open("/home/antototh/Downloads/krest_debug_log_developer.log", "a") as f:
         f.write(message + "\n")
+
+USER_KREST_DIR = Path.home() / ".krest"
+USER_KREST_DIR.mkdir(parents=True, exist_ok=True)
+LOG_FILE = USER_KREST_DIR / 'krest.log'
+
+log_levels = {1: logging.DEBUG, 2: logging.INFO, 3: logging.WARNING, 4: logging.ERROR, 5: logging.CRITICAL}
+
+def setup_logging(log_level):
+    logging.basicConfig(filename=LOG_FILE, level=log_level, format="%(asctime)s - %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S", force=True)
+    print("Logs will be saved here:", LOG_FILE)
 
 class CredentialType(Enum):
     BASIC = ("Basic", "Basic Auth (" + t(t.BASICAUTH_DESC) + ")")
@@ -98,7 +110,8 @@ def empty_credential(credential_type: str) -> Dict[str, Any]:
             "labels": [],
             "credential_type": credential_type,
             "token_url": "",
-            "scope": None, # e.g. "urn:opc:idm:__myscopes__"
+            "token_body": "grant_type=client_credentials&scope=*",
+            "token_headers": {"Accept": "application/json", "Content-Type": "application/x-www-form-urlencoded"},
             "client_id": "",
             "client_secret": "",
             "created_at": None,
@@ -263,7 +276,6 @@ class KrestBackend:
             encrypted_data = f.read()
         magic_bytes, salt, iv, ciphertext = encrypted_data[:7], encrypted_data[7:23], encrypted_data[23:35], encrypted_data[35:]
         if magic_bytes != MAGIC_BYTES:
-            # developer_log(f"Expected magic bytes: {MAGIC_BYTES}, found: {magic_bytes}")
             raise ValueError(t(t.ERR_MAGICBYTES))
         key = self.derive_key(self.file_password, salt)
         aesgcm = AESGCM(key)
@@ -276,6 +288,8 @@ class KrestBackend:
         self.dirty_bit = None
 
     def log_response(self, call_type: str, endpoint_id: int, response: httpx.Response, endpoint: dict|None = None, credential: dict|None = None):
+        """Add a call with response to the History."""
+
         next_id = self.file_data["max_call_history_id"] + 1
 
         # try:
@@ -285,7 +299,7 @@ class KrestBackend:
 
         cookie_list = [vars(c) for c in response.cookies.jar]
 
-        self.file_data["call_history"].append({
+        history_record = {
             "id": next_id,
             "call_type": call_type,
             "endpoint_id": endpoint_id,
@@ -293,16 +307,13 @@ class KrestBackend:
             "endpoint": (endpoint or {}).copy(),
             "credential": (credential or {}).copy(),
             "elapsed_time": response.elapsed.total_seconds() if response.elapsed else 0,
-
             # "request_url": str(response.request.url),
             # "request_headers": dict(response.request.headers),                       - endpoint should include
             # "request_method": response.request.method,                               - endpoint should include
             # "request_body": response.request.body if response.request.body else "",  - endpoint should include
-
             #"response_url": str(response.url),
             "response_status_code": response.status_code,
             "response_reason_phrase": response.reason_phrase,
-
             "response_content_length": len(response.content) if response.content else 0,
             "response_encoding": response.encoding,
             "response_charset_encoding": response.charset_encoding,
@@ -315,13 +326,19 @@ class KrestBackend:
             "response_http_version": response.http_version,
             "response_links": response.links.copy(),
             "response_has_redirect_location": response.has_redirect_location,
-        })
+        }
+
+        self.file_data["call_history"].append(history_record)
         self.file_data["max_call_history_id"] = next_id
+
+        logging.debug(history_record)
+
         return next_id
 
 
     def run_endpoint(self, endpoint_id):
 
+        logging.debug('prepare endpoint setup...')
         endpoint = self.get_endpoint(endpoint_id)
         if endpoint == None:
             raise ValueError(t(t.ERR_INVALID_ENDPOINT_ID, endpoint_id=endpoint_id))
@@ -355,21 +372,34 @@ class KrestBackend:
 
         if credential_type == CredentialType.OAUTH2.value:
 
-            token_body = "grant_type=client_credentials"
-            if credential.get("scope", None):
-                token_body += "&scope=" + credential["scope"]
+            token_body = credential.get("token_body", None)
+            token_headers = credential.get("token_headers", None)
+
+            ### for backward compatibility with 1.0.2:
+            if not token_body and not token_headers:
+                token_body = "grant_type=client_credentials"
+                token_headers = {"Accept": "application/json", "Content-Type": "application/x-www-form-urlencoded"}
+                if credential.get("scope", None):
+                    token_body += "&scope=" + credential["scope"]
+                credential.pop("scope", None)
+                credential["token_body"] = token_body
+                credential["token_headers"] = token_headers
+                self.save_credential(credential)
+            ###
 
             token_response = None
             with httpx.Client(event_hooks=hooks, transport=transport) as client:
+                logging.debug('token request...')
                 token_response = client.request(
                     method="POST",
                     url=credential.get("token_url"),
                     auth=httpx.BasicAuth(credential.get("client_id"), credential.get("client_secret")),
                     timeout=endpoint.get("timeout"),
-                    headers={"Accept": "application/json", "Content-Type": "application/x-www-form-urlencoded"},
+                    headers=token_headers,
                     data=token_body,
                     follow_redirects=endpoint.get("follow_redirects")
                 )
+                logging.debug('got token response.')
 
             self.log_response(t(t.TOKEN_REQUEST), endpoint_id, token_response, endpoint, credential)
             token_response.raise_for_status()
@@ -386,6 +416,7 @@ class KrestBackend:
 
         response = None
         with httpx.Client(event_hooks=hooks, transport=transport) as client:
+            logging.debug('endpoint request...')
             response = client.request(
                 method=endpoint.get("method"),
                 url=endpoint.get("url"),
@@ -396,6 +427,7 @@ class KrestBackend:
                 params=endpoint.get("params"),
                 follow_redirects=endpoint.get("follow_redirects")
             )
+            logging.debug('got endpoint response.')
 
         self.log_response(t(t.SERVICE_REQUEST), endpoint_id, response, endpoint, credential)
         self.dirty_bit = True

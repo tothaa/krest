@@ -79,7 +79,6 @@
   "BROWSE": "Göz gəzdir",
   "PASSWORD": "Şifrə",
   "TOKEN_URL": "Token URL",
-  "SCOPE": "Əhatə dairəsi (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Etimadnamə redaktoru",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Fayl artıq mövcuddur və üzərinə yazılacaq. Davam edilsin?",
   "FILE_LOADED": "Fayl yükləndi: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Kimlik məlumatlarını idarə edin",
-  "USERNAME": "İstifadəçi adı"
+  "USERNAME": "İstifadəçi adı",
+  "FILE": "Fayl"
 }

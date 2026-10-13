@@ -79,7 +79,6 @@
   "BROWSE": "Pregledaj",
   "PASSWORD": "Lozinka",
   "TOKEN_URL": "URL tokena",
-  "SCOPE": "Opseg (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Uređivač vjerodajnica",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Datoteka već postoji i bit će prepisana. Nastaviti?",
   "FILE_LOADED": "Datoteka učitana: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Upravljanje vjerodajnicama",
-  "USERNAME": "Korisničko ime"
+  "USERNAME": "Korisničko ime",
+  "FILE": "Datoteka"
 }

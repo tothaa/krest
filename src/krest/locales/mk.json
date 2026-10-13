@@ -79,7 +79,6 @@
   "BROWSE": "Пребарај",
   "PASSWORD": "Лозинка",
   "TOKEN_URL": "URL за токен",
-  "SCOPE": "Опсег (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Уредник за акредитиви",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Датотеката веќе постои и ќе биде пребришана. Продолжи?",
   "FILE_LOADED": "Датотеката е вчитана: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Управувај со ингеренции",
-  "USERNAME": "Корисничко име"
+  "USERNAME": "Корисничко име",
+  "FILE": "Датотека"
 }

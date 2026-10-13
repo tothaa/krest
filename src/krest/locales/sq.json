@@ -79,7 +79,6 @@
   "BROWSE": "Shfleto",
   "PASSWORD": "Fjalëkalimi",
   "TOKEN_URL": "URL e Token-it",
-  "SCOPE": "Fushëveprimi (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Redaktori i kredencialeve",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Skedari ekziston dhe do të mbishkruhet. Vazhdon?",
   "FILE_LOADED": "Skedari u ngarkua: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Menaxho kredencialet",
-  "USERNAME": "Emri i përdoruesit"
+  "USERNAME": "Emri i përdoruesit",
+  "FILE": "Skedar"
 }

@@ -79,7 +79,6 @@
   "BROWSE": "Baadh",
   "PASSWORD": "Furaha sirta ah",
   "TOKEN_URL": "URL-ka Token-ka",
-  "SCOPE": "Scope",
   "CLIENT_ID": "ID-ga Macmiilka",
   "CLIENT_SECRET": "Sirta Macmiilka",
   "CREDENTIAL_EDITOR": "Tifaftiraha Aqoonsiga",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Faylka horay ayuu u jiray waana la bedeli doonaa. Sii wad?",
   "FILE_LOADED": "Faylka waa la soo raray: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Maamul aqoonsiga",
-  "USERNAME": "Magaca isticmaalaha"
+  "USERNAME": "Magaca isticmaalaha",
+  "FILE": "Fayl"
 }

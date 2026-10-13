@@ -79,7 +79,6 @@
   "BROWSE": "Phequlula",
   "PASSWORD": "Liphasiwedi",
   "TOKEN_URL": "URL yethokheni",
-  "SCOPE": "Bubanti",
   "CLIENT_ID": "ID yeklayenti",
   "CLIENT_SECRET": "Ukhiye loyimfihlo weklayenti",
   "CREDENTIAL_EDITOR": "Umhleli wemininingwane yekungena",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Lifayela selivele likhona futsi litawubhalwa ngetulu. Ufuna kuchubeka?",
   "FILE_LOADED": "Lifayela lilayishiwe: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Phatsa imininingwane yekungena",
-  "USERNAME": "Ligama lemsebentisi"
+  "USERNAME": "Ligama lemsebentisi",
+  "FILE": "Lifayela"
 }

@@ -79,7 +79,6 @@
   "BROWSE": "参照",
   "PASSWORD": "パスワード",
   "TOKEN_URL": "トークン URL",
-  "SCOPE": "スコープ",
   "CLIENT_ID": "クライアント ID",
   "CLIENT_SECRET": "クライアントシークレット",
   "CREDENTIAL_EDITOR": "認証情報エディタ",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "ファイルは既に存在し、上書きされます。続行しますか？",
   "FILE_LOADED": "ファイルを読み込みました: [b]{file_path}[/b]。",
   "MANAGE_CREDENTIALS": "資格情報の管理",
-  "USERNAME": "ユーザー名"
+  "USERNAME": "ユーザー名",
+  "FILE": "ファイル"
 }

@@ -79,7 +79,6 @@
   "BROWSE": "Gözat",
   "PASSWORD": "Şifre",
   "TOKEN_URL": "Token URL",
-  "SCOPE": "Kapsam (Scope)",
   "CLIENT_ID": "İstemci ID",
   "CLIENT_SECRET": "İstemci Gizli Anahtarı",
   "CREDENTIAL_EDITOR": "Kimlik Bilgisi Düzenleyici",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Dosya zaten mevcut ve üzerine yazılacak. Devam etmek istiyor musunuz?",
   "FILE_LOADED": "Dosya yüklendi: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Kimlik bilgilerini yönet",
-  "USERNAME": "Kullanıcı adı"
+  "USERNAME": "Kullanıcı adı",
+  "FILE": "Dosya"
 }

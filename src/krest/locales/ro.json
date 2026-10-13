@@ -79,7 +79,6 @@
   "BROWSE": "Răsfoiește",
   "PASSWORD": "Parolă",
   "TOKEN_URL": "URL Token",
-  "SCOPE": "Domeniu (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Editor acreditări",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Fișierul există deja și va fi suprascris. Dorești să continui?",
   "FILE_LOADED": "Fișier încărcat: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Gestionați acreditările",
-  "USERNAME": "Nume de utilizator"
+  "USERNAME": "Nume de utilizator",
+  "FILE": "Fișier"
 }

@@ -79,7 +79,6 @@
   "BROWSE": "Tsvaga",
   "PASSWORD": "Pasiwedhi",
   "TOKEN_URL": "URL yetoken",
-  "SCOPE": "Chiyero",
   "CLIENT_ID": "ID yemutengi",
   "CLIENT_SECRET": "Kiyi yakavanzika yemutengi",
   "CREDENTIAL_EDITOR": "Mupepeti wemashoko ekupinda",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Faira riripo kare uye richanyorwa patsva. Unoda kuenderera mberi here?",
   "FILE_LOADED": "Faira ratakurwa: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Tonga mashoko ekupinda",
-  "USERNAME": "Zita remushandisi"
+  "USERNAME": "Zita remushandisi",
+  "FILE": "Faira"
 }

@@ -79,7 +79,6 @@
   "BROWSE": "Огляд",
   "PASSWORD": "Пароль",
   "TOKEN_URL": "URL токена",
-  "SCOPE": "Область (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Редактор облікових даних",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Файл уже існує і його буде перезаписано. Продовжити?",
   "FILE_LOADED": "Файл завантажено: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Керування обліковими даними",
-  "USERNAME": "Ім'я користувача"
+  "USERNAME": "Ім'я користувача",
+  "FILE": "Файл"
 }

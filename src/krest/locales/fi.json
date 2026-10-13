@@ -79,7 +79,6 @@
   "BROWSE": "Selaa",
   "PASSWORD": "Salasana",
   "TOKEN_URL": "Token URL",
-  "SCOPE": "Skooppi (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Tunnistetietojen muokkain",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Tiedosto on jo olemassa ja se korvataan. Jatketaanko?",
   "FILE_LOADED": "Tiedosto ladattu: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Hallitse tunnistetietoja",
-  "USERNAME": "Käyttäjätunnus"
+  "USERNAME": "Käyttäjätunnus",
+  "FILE": "Tiedosto"
 }

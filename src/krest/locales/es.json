@@ -79,7 +79,6 @@
   "BROWSE": "Examinar",
   "PASSWORD": "Contraseña",
   "TOKEN_URL": "URL del Token",
-  "SCOPE": "Alcance",
   "CLIENT_ID": "ID de Cliente",
   "CLIENT_SECRET": "Secreto de Cliente",
   "CREDENTIAL_EDITOR": "Editor de Credenciales",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "El archivo ya existe y será sobrescrito. ¿Deseas continuar?",
   "FILE_LOADED": "Archivo cargado: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Gestionar credenciales",
-  "USERNAME": "Nombre de usuario"
+  "USERNAME": "Nombre de usuario",
+  "FILE": "Archivo"
 }

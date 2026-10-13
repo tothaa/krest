@@ -79,7 +79,6 @@
   "BROWSE": "Przeglądaj",
   "PASSWORD": "Hasło",
   "TOKEN_URL": "URL tokenu",
-  "SCOPE": "Zakres (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Edytor poświadczeń",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Plik już istnieje i zostanie nadpisany. Kontynuować?",
   "FILE_LOADED": "Wczytano plik: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Zarządzaj poświadczeniami",
-  "USERNAME": "Nazwa użytkownika"
+  "USERNAME": "Nazwa użytkownika",
+  "FILE": "Plik"
 }

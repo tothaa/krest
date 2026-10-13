@@ -79,7 +79,6 @@
   "BROWSE": "Yillo",
   "PASSWORD": "Finnde",
   "TOKEN_URL": "URL Token",
-  "SCOPE": "Scope",
   "CLIENT_ID": "ID Client",
   "CLIENT_SECRET": "Secret Client",
   "CREDENTIAL_EDITOR": "Taƴoowo seedeeji",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Fiisiyee oo ana woodi kadi o winnditoto dow mum. Ada yiɗi yaadu?",
   "FILE_LOADED": "Fiisiyee oo heɓama: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Toppitagal seedanteeje",
-  "USERNAME": "Innde gollotooɗo"
+  "USERNAME": "Innde gollotooɗo",
+  "FILE": "Fiisiyee"
 }

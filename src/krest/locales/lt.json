@@ -79,7 +79,6 @@
   "BROWSE": "Naršyti",
   "PASSWORD": "Slaptažodis",
   "TOKEN_URL": "Token URL",
-  "SCOPE": "Sritis (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Kredencialų redaktorius",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Failas jau egzistuoja ir bus perrašytas. Tęsti?",
   "FILE_LOADED": "Failas įkeltas: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Tvarkyti kredencialus",
-  "USERNAME": "Vartotojo vardas"
+  "USERNAME": "Vartotojo vardas",
+  "FILE": "Failas"
 }

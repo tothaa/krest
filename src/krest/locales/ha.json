@@ -79,7 +79,6 @@
   "BROWSE": "Nemo",
   "PASSWORD": "Kalmar Sirri",
   "TOKEN_URL": "URL na Token",
-  "SCOPE": "Iyaka (Scope)",
   "CLIENT_ID": "ID na Abokin Ciniki",
   "CLIENT_SECRET": "Asirin Abokin Ciniki",
   "CREDENTIAL_EDITOR": "Editan Shaidu",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Fayil ɗin ya riga ya kasance kuma za a sake rubuta shi. Kana son ci gaba?",
   "FILE_LOADED": "An loda fayil: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Sarrafa shaidun shiga",
-  "USERNAME": "Sunan mai amfani"
+  "USERNAME": "Sunan mai amfani",
+  "FILE": "Fayil"
 }

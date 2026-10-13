@@ -79,7 +79,6 @@
   "BROWSE": "براؤز ڪريو",
   "PASSWORD": "پاسورڊ",
   "TOKEN_URL": "ٽوڪن URL",
-  "SCOPE": "دائرو (Scope)",
   "CLIENT_ID": "ڪلائنٽ ID",
   "CLIENT_SECRET": "ڪلائنٽ سيڪريٽ",
   "CREDENTIAL_EDITOR": "ثبوت جو ايڊيٽر",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "فائل اڳ ۾ ئي موجود آهي ۽ ان کي مٽايو ويندو. ڇا توهان جاري رکڻ چاهيو ٿا؟",
   "FILE_LOADED": "فائل لوڊ ٿي وئي: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "سندن جو انتظام ڪريو",
-  "USERNAME": "واهپي ڪندڙ جو نالو"
+  "USERNAME": "واهپي ڪندڙ جو نالو",
+  "FILE": "فائل"
 }

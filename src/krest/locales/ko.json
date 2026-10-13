@@ -79,7 +79,6 @@
   "BROWSE": "찾아보기",
   "PASSWORD": "비밀번호",
   "TOKEN_URL": "토큰 URL",
-  "SCOPE": "범위 (Scope)",
   "CLIENT_ID": "클라이언트 ID",
   "CLIENT_SECRET": "클라이언트 시크릿",
   "CREDENTIAL_EDITOR": "자격 증명 편집기",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "파일이 이미 존재하며 덮어씁니다. 계속하시겠습니까?",
   "FILE_LOADED": "파일 로드됨: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "자격 증명 관리",
-  "USERNAME": "사용자 이름"
+  "USERNAME": "사용자 이름",
+  "FILE": "파일"
 }

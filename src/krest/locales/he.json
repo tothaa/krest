@@ -79,7 +79,6 @@
   "BROWSE": "עיון",
   "PASSWORD": "סיסמה",
   "TOKEN_URL": "URL לטוקן",
-  "SCOPE": "טווח (Scope)",
   "CLIENT_ID": "מזהה לקוח",
   "CLIENT_SECRET": "סוד לקוח",
   "CREDENTIAL_EDITOR": "עורך פרטי אימות",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "הקובץ כבר קיים ויידרס. להמשיך?",
   "FILE_LOADED": "הקובץ נטען: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "נהל אישורי גישה",
-  "USERNAME": "שם משתמש"
+  "USERNAME": "שם משתמש",
+  "FILE": "קובץ"
 }

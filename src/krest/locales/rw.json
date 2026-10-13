@@ -79,7 +79,6 @@
   "BROWSE": "Shakisha",
   "PASSWORD": "Ijambo ry'ibanga",
   "TOKEN_URL": "URL ya token",
-  "SCOPE": "Urwego",
   "CLIENT_ID": "ID y'umukiriya",
   "CLIENT_SECRET": "Urufunguzo rw'ibanga rw'umukiriya",
   "CREDENTIAL_EDITOR": "Muhinduzi w'amakuru yo kwinjira",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Dosiye isanzwe ihari kandi izandikwaho bundi bushya. Urashaka gukomeza?",
   "FILE_LOADED": "Dosiye yapakiwe: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Genzura amakuru yo kwinjira",
-  "USERNAME": "Izina ry'umukoresha"
+  "USERNAME": "Izina ry'umukoresha",
+  "FILE": "Dosiye"
 }

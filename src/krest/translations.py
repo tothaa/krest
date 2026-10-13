@@ -115,7 +115,6 @@ class T:
     BROWSE = new_text_id()
     PASSWORD = new_text_id()
     TOKEN_URL = new_text_id()
-    SCOPE = new_text_id()
     CLIENT_ID = new_text_id()
     CLIENT_SECRET = new_text_id()
     CREDENTIAL_EDITOR = new_text_id()
@@ -144,6 +143,7 @@ class T:
     FILE_LOADED = new_text_id()
     MANAGE_CREDENTIALS = new_text_id()
     USERNAME = new_text_id()
+    FILE = new_text_id()
     ############################
 
     @staticmethod

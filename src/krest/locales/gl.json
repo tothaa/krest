@@ -79,7 +79,6 @@
   "BROWSE": "Examinar",
   "PASSWORD": "Contrasinal",
   "TOKEN_URL": "URL do token",
-  "SCOPE": "Ámbito",
   "CLIENT_ID": "ID do cliente",
   "CLIENT_SECRET": "Segredo do cliente",
   "CREDENTIAL_EDITOR": "Editor de credenciais",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "O ficheiro xa existe e sobrescribirase. Queres continuar?",
   "FILE_LOADED": "Ficheiro cargado: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Xestionar credenciais",
-  "USERNAME": "Nome de usuario"
+  "USERNAME": "Nome de usuario",
+  "FILE": "Ficheiro"
 }

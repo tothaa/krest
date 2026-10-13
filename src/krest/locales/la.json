@@ -79,7 +79,6 @@
   "BROWSE": "Perlustrare",
   "PASSWORD": "Tessera",
   "TOKEN_URL": "URL Signi",
-  "SCOPE": "Ambitus (Scope)",
   "CLIENT_ID": "ID Clientis",
   "CLIENT_SECRET": "Secretum Clientis",
   "CREDENTIAL_EDITOR": "Scriptorium Diplomatum",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Fasciculus iam exstat et rescribetur. Pergere?",
   "FILE_LOADED": "Fasciculus onustus: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Documenta administrare",
-  "USERNAME": "Nomen usoris"
+  "USERNAME": "Nomen usoris",
+  "FILE": "Fasciculus"
 }

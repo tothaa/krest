@@ -79,7 +79,6 @@
   "BROWSE": "Khangela",
   "PASSWORD": "Igama lokugqitha",
   "TOKEN_URL": "URL ye-token",
-  "SCOPE": "Umda",
   "CLIENT_ID": "ID yomxhasi",
   "CLIENT_SECRET": "Isitshixo esiyimfihlo somxhasi",
   "CREDENTIAL_EDITOR": "Umhleli weenkcukacha zokungena",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Ifayile sele ikhona kwaye iya kubhalwa ngaphezulu. Ufuna ukuqhubeka?",
   "FILE_LOADED": "Ifayile ilayishiwe: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Lawula iinkcukacha zokungena",
-  "USERNAME": "Igama lomsebenzisi"
+  "USERNAME": "Igama lomsebenzisi",
+  "FILE": "Ifayile"
 }

@@ -79,7 +79,6 @@
   "BROWSE": "Bläddra",
   "PASSWORD": "Lösenord",
   "TOKEN_URL": "Token-URL",
-  "SCOPE": "Omfång (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Redigerare för inloggningsuppgifter",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Filen finns redan och kommer att skrivas över. Fortsätta?",
   "FILE_LOADED": "Fil laddad: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Hantera autentiseringsuppgifter",
-  "USERNAME": "Användarnamn"
+  "USERNAME": "Användarnamn",
+  "FILE": "Fil"
 }

@@ -79,7 +79,6 @@
   "BROWSE": "Lavisisa",
   "PASSWORD": "Phasiwedi",
   "TOKEN_URL": "URL ya token",
-  "SCOPE": "Mpimo",
   "CLIENT_ID": "ID ya khlayenti",
   "CLIENT_SECRET": "Xilotlelo xa xihundla xa khlayenti",
   "CREDENTIAL_EDITOR": "Muhleri wa vuxokoxoko byo nghena",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Fayili yi kona se naswona yi ta tsariwa ehenhla. U lava ku ya mahlweni?",
   "FILE_LOADED": "Fayili yi layichiwile: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Lawula vuxokoxoko byo nghena",
-  "USERNAME": "Vito ra mutirhisi"
+  "USERNAME": "Vito ra mutirhisi",
+  "FILE": "Fayili"
 }

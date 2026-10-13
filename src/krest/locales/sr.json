@@ -79,7 +79,6 @@
   "BROWSE": "Pregledaj",
   "PASSWORD": "Lozinka",
   "TOKEN_URL": "URL tokena",
-  "SCOPE": "Opseg (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Urednik akreditiva",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Datoteka već postoji i biće prepisana. Nastaviti?",
   "FILE_LOADED": "Datoteka učitana: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Управљање акредитивима",
-  "USERNAME": "Корисничко име"
+  "USERNAME": "Корисничко име",
+  "FILE": "Datoteka"
 }

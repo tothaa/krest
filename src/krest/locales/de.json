@@ -79,7 +79,6 @@
   "BROWSE": "Durchsuchen",
   "PASSWORD": "Passwort",
   "TOKEN_URL": "Token-URL",
-  "SCOPE": "Bereich (Scope)",
   "CLIENT_ID": "Client-ID",
   "CLIENT_SECRET": "Client-Secret",
   "CREDENTIAL_EDITOR": "Anmeldedaten-Editor",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Datei existiert bereits und wird überschrieben. Möchten Sie fortfahren?",
   "FILE_LOADED": "Datei geladen: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Anmeldedaten verwalten",
-  "USERNAME": "Benutzername"
+  "USERNAME": "Benutzername",
+  "FILE": "Datei"
 }

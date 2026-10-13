@@ -79,7 +79,6 @@
   "BROWSE": "Brabhsáil",
   "PASSWORD": "Pasfhocal",
   "TOKEN_URL": "URL an Chomhartha",
-  "SCOPE": "Scóip (Scope)",
   "CLIENT_ID": "ID Cliant",
   "CLIENT_SECRET": "Rún Cliant",
   "CREDENTIAL_EDITOR": "Eagarthóir Dintiúir",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Tá an comhad ann cheana féin agus déanfar é a fhorscríobh. Leanúint ar aghaidh?",
   "FILE_LOADED": "Comhad luchtaithe: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Bainistigh dintiúir",
-  "USERNAME": "Ainm úsáideora"
+  "USERNAME": "Ainm úsáideora",
+  "FILE": "Comhad"
 }

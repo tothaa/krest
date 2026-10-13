@@ -79,7 +79,6 @@
   "BROWSE": "Di",
   "PASSWORD": "Gbenya ɣaɣla",
   "TOKEN_URL": "Token ƒe URL",
-  "SCOPE": "Seɖoƒe",
   "CLIENT_ID": "Klayenti ID",
   "CLIENT_SECRET": "Klayenti ƒe safui ɣaɣla",
   "CREDENTIAL_EDITOR": "Gegeɖeeme nyawo ƒe trɔla",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Faɛl la li xoxo eye woagaŋlɔ ɖe edzi. Èdi be yeayi edzi mahã?",
   "FILE_LOADED": "Wotsɔ faɛl la de eme: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Kpɔ gegeɖeeme nyawo dzi",
-  "USERNAME": "Zãla ƒe ŋkɔ"
+  "USERNAME": "Zãla ƒe ŋkɔ",
+  "FILE": "Faɛl"
 }

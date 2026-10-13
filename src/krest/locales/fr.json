@@ -79,7 +79,6 @@
   "BROWSE": "Parcourir",
   "PASSWORD": "Mot de passe",
   "TOKEN_URL": "URL du jeton",
-  "SCOPE": "Portée",
   "CLIENT_ID": "ID Client",
   "CLIENT_SECRET": "Secret Client",
   "CREDENTIAL_EDITOR": "Éditeur d'identifiants",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Le fichier existe déjà et sera écrasé. Voulez-vous continuer ?",
   "FILE_LOADED": "Fichier chargé : [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Gérer les identifiants",
-  "USERNAME": "Nom d'utilisateur"
+  "USERNAME": "Nom d'utilisateur",
+  "FILE": "Fichier"
 }

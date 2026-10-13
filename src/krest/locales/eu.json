@@ -79,7 +79,6 @@
   "BROWSE": "Arakatu",
   "PASSWORD": "Pasahitza",
   "TOKEN_URL": "Token URL-a",
-  "SCOPE": "Esparrua (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Kredentzialen editorea",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Fitxategia badago lehendik eta gainidatzi egingo da. Jarraitu?",
   "FILE_LOADED": "Fitxategia kargatu da: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Kudeatu kredentzialak",
-  "USERNAME": "Erabiltzaile-izena"
+  "USERNAME": "Erabiltzaile-izena",
+  "FILE": "Fitxategia"
 }

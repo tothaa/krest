@@ -79,7 +79,6 @@
   "BROWSE": "Batla",
   "PASSWORD": "Lefoko la sephiri",
   "TOKEN_URL": "URL ya token",
-  "SCOPE": "Selekanyo sa tetla",
   "CLIENT_ID": "ID ya moreki",
   "CLIENT_SECRET": "Selotlolo sa sephiri sa moreki",
   "CREDENTIAL_EDITOR": "Morulaganyi wa tshedimosetso ya go tsena",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Faele e setse e le teng mme e tla kwalwa gape. A o batla go tswelela?",
   "FILE_LOADED": "Faele e laetswe: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Laola tshedimosetso ya go tsena",
-  "USERNAME": "Leina la modirisi"
+  "USERNAME": "Leina la modirisi",
+  "FILE": "Faele"
 }

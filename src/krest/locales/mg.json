@@ -79,7 +79,6 @@
   "BROWSE": "Hijery",
   "PASSWORD": "Teny miafina",
   "TOKEN_URL": "URL an'ny token",
-  "SCOPE": "Faritra",
   "CLIENT_ID": "ID an'ny mpanjifa",
   "CLIENT_SECRET": "Tsiambaratelon'ny mpanjifa",
   "CREDENTIAL_EDITOR": "Mpanova fahazoana miditra",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Efa misy ny rakitra ary hosoloina. Te hanohy ve ianao?",
   "FILE_LOADED": "Rakitra voasokatra: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Tantano ny fahazoana miditra",
-  "USERNAME": "Anaran'ny mpampiasa"
+  "USERNAME": "Anaran'ny mpampiasa",
+  "FILE": "Rakitra"
 }

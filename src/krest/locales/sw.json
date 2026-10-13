@@ -79,7 +79,6 @@
   "BROWSE": "Vinjari",
   "PASSWORD": "Nenosiri",
   "TOKEN_URL": "URL ya Tokeni",
-  "SCOPE": "Upeo (Scope)",
   "CLIENT_ID": "ID ya Mteja",
   "CLIENT_SECRET": "Siri ya Mteja",
   "CREDENTIAL_EDITOR": "Mhariri wa Vibali",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Faili tayari lipo na litaandikwa upya. Je, ungependa kuendelea?",
   "FILE_LOADED": "Faili limepakiwa: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Dhibiti kitambulisho",
-  "USERNAME": "Jina la mtumiaji"
+  "USERNAME": "Jina la mtumiaji",
+  "FILE": "Faili"
 }

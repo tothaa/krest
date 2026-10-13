@@ -79,7 +79,6 @@
   "BROWSE": "Procházet",
   "PASSWORD": "Heslo",
   "TOKEN_URL": "URL Tokenu",
-  "SCOPE": "Rozsah (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Editor přihlašovacích údajů",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Soubor již existuje a bude přepsán. Pokračovat?",
   "FILE_LOADED": "Soubor načten: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Spravovat přihlašovací údaje",
-  "USERNAME": "Uživatelské jméno"
+  "USERNAME": "Uživatelské jméno",
+  "FILE": "Soubor"
 }

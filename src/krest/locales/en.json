@@ -79,7 +79,6 @@
   "BROWSE": "Browse",
   "PASSWORD": "Password",
   "TOKEN_URL": "Token URL",
-  "SCOPE": "Scope",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Credential Editor",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "File already exists and will be overwritten. Do you want to continue?",
   "FILE_LOADED": "File loaded: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Manage Credentials",
-  "USERNAME": "Username"
+  "USERNAME": "Username",
+  "FILE": "File"
 }

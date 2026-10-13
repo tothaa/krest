@@ -79,7 +79,6 @@
   "BROWSE": "Sakatulani",
   "PASSWORD": "Mawu achinsinsi",
   "TOKEN_URL": "URL ya token",
-  "SCOPE": "Malire",
   "CLIENT_ID": "ID ya kasitomala",
   "CLIENT_SECRET": "Kiyi yachinsinsi ya kasitomala",
   "CREDENTIAL_EDITOR": "Mkonzi wa zambiri zolowera",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Fayilo ilipo kale ndipo idzalembedwa pamwamba pake. Kodi mukufuna kupitiriza?",
   "FILE_LOADED": "Fayilo yatsegulidwa: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Samalirani zambiri zolowera",
-  "USERNAME": "Dzina logwiritsa ntchito"
+  "USERNAME": "Dzina logwiritsa ntchito",
+  "FILE": "Fayilo"
 }

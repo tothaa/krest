@@ -79,7 +79,6 @@
   "BROWSE": "Pori",
   "PASSWORD": "Cyfrinair",
   "TOKEN_URL": "URL Tocyn",
-  "SCOPE": "Cwmpas (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Golygydd Credential",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Ffeil eisoes yn bodoli a bydd yn cael ei throsysgrifo. Parhau?",
   "FILE_LOADED": "Ffeil wedi'i llwytho: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Rheoli Grindiau",
-  "USERNAME": "Enw defnyddiwr"
+  "USERNAME": "Enw defnyddiwr",
+  "FILE": "Ffeil"
 }

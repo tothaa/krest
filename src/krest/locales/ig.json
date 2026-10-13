@@ -79,7 +79,6 @@
   "BROWSE": "Chọgharịa",
   "PASSWORD": "Okwuntughe",
   "TOKEN_URL": "Token URL",
-  "SCOPE": "Scope",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Onye nchịkọta Credential",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Faịlụ adịlarị ma a ga-edegharị ya. Gaa n'ihu?",
   "FILE_LOADED": "Ebudatara faịlụ: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Jikwaa nzere",
-  "USERNAME": "Aha njirimara"
+  "USERNAME": "Aha njirimara",
+  "FILE": "Faịlụ"
 }

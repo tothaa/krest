@@ -79,7 +79,6 @@
   "BROWSE": "Navegar",
   "PASSWORD": "Contrasenya",
   "TOKEN_URL": "URL del token",
-  "SCOPE": "Àmbit (Scope)",
   "CLIENT_ID": "ID de client",
   "CLIENT_SECRET": "Secret de client",
   "CREDENTIAL_EDITOR": "Editor de credencials",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "El fitxer ja existeix i es sobreescriurà. Continuar?",
   "FILE_LOADED": "Fitxer carregat: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Gestiona les credencials",
-  "USERNAME": "Nom d'usuari"
+  "USERNAME": "Nom d'usuari",
+  "FILE": "Fitxer"
 }

@@ -79,7 +79,6 @@
   "BROWSE": "Barbaadi",
   "PASSWORD": "Jecha iccitii",
   "TOKEN_URL": "URL Token",
-  "SCOPE": "Scope",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Gulaalaa Eenyummeessaa",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Faayiliin duraan jira, irra deebidhaan barreeffama. Itti fufuu barbaaddaa?",
   "FILE_LOADED": "Faayiliin fe'ameera: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Akkaataa seeninsaa bulchi",
-  "USERNAME": "Maqaa fayyadamaa"
+  "USERNAME": "Maqaa fayyadamaa",
+  "FILE": "Faayilii"
 }

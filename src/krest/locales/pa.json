@@ -79,7 +79,6 @@
   "BROWSE": "ਬ੍ਰਾਊਜ਼",
   "PASSWORD": "ਪਾਸਵਰਡ",
   "TOKEN_URL": "ਟੋਕਨ URL",
-  "SCOPE": "ਸਕੋਪ",
   "CLIENT_ID": "ਕਲਾਇੰਟ ID",
   "CLIENT_SECRET": "ਕਲਾਇੰਟ ਸੀਕਰੇਟ",
   "CREDENTIAL_EDITOR": "ਪ੍ਰਮਾਣ ਪੱਤਰ ਸੰਪਾਦਕ",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "ਫਾਈਲ ਪਹਿਲਾਂ ਹੀ ਮੌਜੂਦ ਹੈ ਅਤੇ ਇਸਨੂੰ ਬਦਲ ਦਿੱਤਾ ਜਾਵੇਗਾ। ਕੀ ਤੁਸੀਂ ਜਾਰੀ ਰੱਖਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
   "FILE_LOADED": "ਫਾਈਲ ਲੋਡ ਹੋਈ: [b]{file_path}[/b]।",
   "MANAGE_CREDENTIALS": "ਪ੍ਰਮਾਣ ਪੱਤਰ ਪ੍ਰਬੰਧਿਤ ਕਰੋ",
-  "USERNAME": "ਉਪਭੋਗਤਾ ਨਾਮ"
+  "USERNAME": "ਉਪਭੋਗਤਾ ਨਾਮ",
+  "FILE": "ਫਾਈਲ"
 }

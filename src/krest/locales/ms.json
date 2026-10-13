@@ -79,7 +79,6 @@
   "BROWSE": "Semak",
   "PASSWORD": "Kata Laluan",
   "TOKEN_URL": "URL Token",
-  "SCOPE": "Skop (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Editor Kredensial",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Fail sudah wujud dan akan ditulis ganti. Teruskan?",
   "FILE_LOADED": "Fail dimuatkan: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Urus kelayakan",
-  "USERNAME": "Nama pengguna"
+  "USERNAME": "Nama pengguna",
+  "FILE": "Fail"
 }

@@ -79,7 +79,6 @@
   "BROWSE": "Duyệt",
   "PASSWORD": "Mật khẩu",
   "TOKEN_URL": "URL Token",
-  "SCOPE": "Phạm vi (Scope)",
   "CLIENT_ID": "ID khách",
   "CLIENT_SECRET": "Bí mật khách",
   "CREDENTIAL_EDITOR": "Trình chỉnh sửa thông tin xác thực",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Tệp đã tồn tại và sẽ bị ghi đè. Bạn có muốn tiếp tục không?",
   "FILE_LOADED": "Tệp đã tải: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Quản lý thông tin xác thực",
-  "USERNAME": "Tên người dùng"
+  "USERNAME": "Tên người dùng",
+  "FILE": "Tệp"
 }

@@ -79,7 +79,6 @@
   "BROWSE": "Prebrskaj",
   "PASSWORD": "Geslo",
   "TOKEN_URL": "URL žetona",
-  "SCOPE": "Obseg (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Urednik poverilnic",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Datoteka že obstaja in bo prepisana. Nadaljujem?",
   "FILE_LOADED": "Datoteka naložena: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Upravljanje poverilnic",
-  "USERNAME": "Uporabniško ime"
+  "USERNAME": "Uporabniško ime",
+  "FILE": "Datoteka"
 }

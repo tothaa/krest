@@ -79,7 +79,6 @@
   "BROWSE": "เรียกดู",
   "PASSWORD": "รหัสผ่าน",
   "TOKEN_URL": "URL ของ Token",
-  "SCOPE": "ขอบเขต (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "ตัวแก้ไขข้อมูลประจำตัว",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "ไฟล์มีอยู่แล้วและจะถูกเขียนทับ ดำเนินการต่อหรือไม่?",
   "FILE_LOADED": "โหลดไฟล์แล้ว: [b]{file_path}[/b]",
   "MANAGE_CREDENTIALS": "จัดการข้อมูลประจำตัว",
-  "USERNAME": "ชื่อผู้ใช้"
+  "USERNAME": "ชื่อผู้ใช้",
+  "FILE": "ไฟล์"
 }

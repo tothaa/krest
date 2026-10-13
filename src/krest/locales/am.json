@@ -79,7 +79,6 @@
   "BROWSE": "ፈልግ (Browse)",
   "PASSWORD": "የይለፍ ቃል",
   "TOKEN_URL": "Token URL",
-  "SCOPE": "ወሰን (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "የመለያ አርታኢ",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "ፋይሉ አስቀድሞ አለ እና ይተካል (overwrite)። መቀጠል ይፈልጋሉ?",
   "FILE_LOADED": "ፋይሉ ተጭኗል: [b]{file_path}[/b]።",
   "MANAGE_CREDENTIALS": "ማስረጃዎችን ያስተዳድሩ",
-  "USERNAME": "የተጠቃሚ ስም"
+  "USERNAME": "የተጠቃሚ ስም",
+  "FILE": "ፋይል"
 }

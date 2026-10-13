@@ -79,7 +79,6 @@
   "BROWSE": "Fittex",
   "PASSWORD": "Password",
   "TOKEN_URL": "URL tat-Token",
-  "SCOPE": "Scope",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Editur tal-Kredenzjali",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Il-fajl diġà jeżisti u se jinkiteb fuqu. Kompli?",
   "FILE_LOADED": "Fajl mgħobbi: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Immaniġġja l-kredenzjali",
-  "USERNAME": "Isem l-utent"
+  "USERNAME": "Isem l-utent",
+  "FILE": "Fajl"
 }

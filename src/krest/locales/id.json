@@ -79,7 +79,6 @@
   "BROWSE": "Telusuri",
   "PASSWORD": "Kata Sandi",
   "TOKEN_URL": "URL Token",
-  "SCOPE": "Cakupan",
   "CLIENT_ID": "ID Klien",
   "CLIENT_SECRET": "Rahasia Klien",
   "CREDENTIAL_EDITOR": "Editor Kredensial",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "File sudah ada dan akan ditimpa. Apakah Anda ingin melanjutkan?",
   "FILE_LOADED": "File dimuat: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Kelola kredensial",
-  "USERNAME": "Nama pengguna"
+  "USERNAME": "Nama pengguna",
+  "FILE": "File"
 }

@@ -79,7 +79,6 @@
   "BROWSE": "ရှာဖွေမည်",
   "PASSWORD": "စကားဝှက်",
   "TOKEN_URL": "တိုကင် URL",
-  "SCOPE": "Scope",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "အထောက်အထား တည်းဖြတ်သူ",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "ဖိုင်ရှိနှင့်ပြီးဖြစ်သောကြောင့် အစားထိုးသွားပါမည်။ ဆက်လက်လုပ်ဆောင်မလား?",
   "FILE_LOADED": "ဖိုင်ကို ဖွင့်လိုက်ပါပြီ- [b]{file_path}[/b]။",
   "MANAGE_CREDENTIALS": "အထောက်အထားများကို စီမံခန့်ခွဲရန်",
-  "USERNAME": "အသုံးပြုသူအမည်"
+  "USERNAME": "အသုံးပြုသူအမည်",
+  "FILE": "ဖိုင်"
 }

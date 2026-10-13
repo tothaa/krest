@@ -79,7 +79,6 @@
   "BROWSE": "Blaai",
   "PASSWORD": "Wagwoord",
   "TOKEN_URL": "Token-URL",
-  "SCOPE": "Omvang",
   "CLIENT_ID": "Kliënt-ID",
   "CLIENT_SECRET": "Kliëntgeheim",
   "CREDENTIAL_EDITOR": "Aanmeldbewysredigeerder",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Die lêer bestaan reeds en sal oorskryf word. Wil jy voortgaan?",
   "FILE_LOADED": "Lêer gelaai: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Bestuur aanmeldbewyse",
-  "USERNAME": "Gebruikersnaam"
+  "USERNAME": "Gebruikersnaam",
+  "FILE": "Lêer"
 }

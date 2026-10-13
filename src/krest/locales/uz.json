@@ -79,7 +79,6 @@
   "BROWSE": "Tallash",
   "PASSWORD": "Parol",
   "TOKEN_URL": "Token URL",
-  "SCOPE": "Qamrov (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Hisob ma'lumotlari tahrirlovchisi",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Fayl allaqachon mavjud va qayta yoziladi. Davom etasizmi?",
   "FILE_LOADED": "Fayl yuklandi: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Hisob ma'lumotlarini boshqarish",
-  "USERNAME": "Foydalanuvchi nomi"
+  "USERNAME": "Foydalanuvchi nomi",
+  "FILE": "Fayl"
 }

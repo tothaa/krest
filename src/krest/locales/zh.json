@@ -79,7 +79,6 @@
   "BROWSE": "浏览",
   "PASSWORD": "密码",
   "TOKEN_URL": "令牌 URL",
-  "SCOPE": "范围",
   "CLIENT_ID": "客户端 ID",
   "CLIENT_SECRET": "客户端密钥",
   "CREDENTIAL_EDITOR": "凭据编辑器",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "文件已存在，将被覆盖。您要继续吗？",
   "FILE_LOADED": "文件已加载：[b]{file_path}[/b]。",
   "MANAGE_CREDENTIALS": "管理凭据",
-  "USERNAME": "用户名"
+  "USERNAME": "用户名",
+  "FILE": "文件"
 }

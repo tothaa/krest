@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import gc
 from typing import Iterable, AnyStr, Literal
 from importlib.metadata import version
@@ -7,6 +8,7 @@ import traceback
 import ast
 import json
 from pathlib import Path
+import logging
 from rich.text import Text
 from textual.app import App, ComposeResult
 from textual.containers import Vertical, Horizontal
@@ -16,7 +18,7 @@ from textual.widgets import DirectoryTree, Static, Button, Footer, Header, Label
 from textual import on
 from textual import events
 
-from krest.krest_backend import KrestBackend, METHODS, CredentialType, FILE_EXTENSION, developer_log, empty_endpoint, empty_credential
+from krest.krest_backend import KrestBackend, METHODS, CredentialType, FILE_EXTENSION, developer_log, empty_endpoint, empty_credential, setup_logging, log_levels
 from krest.translations import t
 
 ASCII_LOGO = r"""[blue]
@@ -724,8 +726,9 @@ class CredentialEditor(ModalScreen):
         ("escape", "cancel_dialog", t(t.CLOSE)),
     ]
 
-    def __init__(self, credential:dict|None=None):
+    def __init__(self, credential:dict|None=None, backend:KrestBackend|None=None):
         super().__init__()
+        self.backend = backend
         self.credential = {}
 
         if credential:
@@ -734,6 +737,23 @@ class CredentialEditor(ModalScreen):
     @on(events.Mount)
     def draw_form_on_mount(self, event: events.Mount)-> None:
         credential_type = self.credential.get("credential_type", None)
+        if credential_type == CredentialType.OAUTH2.value:
+            credential = self.credential
+
+            ### For backward compatibility with 1.0.2.
+            token_body = credential.get("token_body", None)
+            token_headers = credential.get("token_headers", None)
+            if not token_body and not token_headers:
+                token_body = "grant_type=client_credentials"
+                token_headers = {"Accept": "application/json", "Content-Type": "application/x-www-form-urlencoded"}
+                if credential.get("scope", None):
+                    token_body += "&scope=" + credential["scope"]
+                credential["scope"] = None
+                credential["token_body"] = token_body
+                credential["token_headers"] = token_headers
+                self.backend.save_credential(credential)
+            ###
+
         self.draw_form(credential_type=credential_type)
 
     def draw_form(self, credential_type):
@@ -750,14 +770,26 @@ class CredentialEditor(ModalScreen):
             dialog_content.mount(LineInput(label=t(t.DESC), value=self.credential.get("desc", ""), id="desc"))
             dialog_content.mount(LineInput(label=t(t.LABELS), value=self.credential.get("labels", ""), id="labels"))
             dialog_content.mount(LineInput(label=t(t.TOKEN_URL), value=self.credential.get("token_url", ""), id="token_url"))
-            dialog_content.mount(LineInput(label=t(t.SCOPE), value=str(self.credential.get("scope", "") or ""), id="scope"))
             dialog_content.mount(LineInput(label=t(t.CLIENT_ID), value=self.credential.get("client_id", ""), id="client_id"))
             dialog_content.mount(LineInput(label=t(t.CLIENT_SECRET), value=self.credential.get("client_secret", ""), id="client_secret"))
+            dialog_content.mount(Label(t(t.HEADERS) + ":"))
+            dialog_content.mount(TextArea.code_editor(
+                text=json.dumps(self.credential.get("token_headers", {}) or {}, indent=4),
+                name=t(t.HEADERS), id="token_headers", language="json",
+                show_line_numbers=True, classes="height10",
+            ))
+            dialog_content.mount(Label(t(t.BODY) + " (application/x-www-form-urlencoded):"))
+            dialog_content.mount(TextArea(
+                text=self.credential.get("token_body", "") or "",
+                name=t(t.BODY), id="token_body", classes="height10",
+            ))
 
     def compose(self) -> ComposeResult:
 
         dialog_content = Vertical(classes="dialog-container", id="credential_editor_dialog_content")
         dialog_content.styles.width = "65%"
+        dialog_content.styles.max_height = "95%"
+        dialog_content.styles.overflow_y = "auto"
         
         with dialog_content:
             yield Label(t(t.CREDENTIAL_EDITOR), classes="title")
@@ -793,6 +825,9 @@ class CredentialEditor(ModalScreen):
         if selected_credential_type:
             # developer_log("selected_credential_type: " + str(selected_credential_type))
             self.credential = empty_credential(selected_credential_type)
+            if selected_credential_type == CredentialType.OAUTH2.value:
+                self.credential["token_body"] = ""
+                self.credential["token_headers"] = {}
             self.draw_form(self.credential["credential_type"])
             self.query_one("#credential_type_selector", Select).disabled = True
 
@@ -840,15 +875,24 @@ class CredentialEditor(ModalScreen):
                 event.stop()
                 return
             
-            scope = self.query_one("#scope", Input).value
-            if scope == "":
-                scope = None
+            try:
+                token_headers = json.loads(self.query_one("#token_headers", TextArea).text)
+                if not isinstance(token_headers, dict):
+                    raise ValueError(t(t.ERR_HEADERS_FORMAT))
+                if not all(isinstance(k, str) and isinstance(v, str) for k, v in token_headers.items()):
+                    raise ValueError(t(t.ERR_HEADERS_STR))
+            except (ValueError, TypeError) as e:
+                self.notify(t(t.HEADERS) + ': ' + str(e), title=t(t.ERROR), severity="error", timeout=ERROR_NOTE_TIMEOUT)
+                event.stop()
+                return
             
             self.credential["name"] = self.query_one("#name", Input).value
             self.credential["desc"] = self.query_one("#desc", Input).value
             self.credential["labels"] = credentials_labels_list
             self.credential["token_url"] = self.query_one("#token_url", Input).value
-            self.credential["scope"] = scope
+            self.credential["token_body"] = self.query_one("#token_body", TextArea).text
+            self.credential["token_headers"] = token_headers
+            self.credential.pop("scope", None)
             self.credential["client_id"] = self.query_one("#client_id", Input).value
             self.credential["client_secret"] = self.query_one("#client_secret", Input).value
 
@@ -920,7 +964,7 @@ class Credentials(ModalScreen):
             if self.backend.file_path:
                 credential_id = self.credentials_data_table_selected_row.value
                 credential = self.backend.get_credential(credential_id)
-                self.app.push_screen(CredentialEditor(credential=credential), callback=self.handle_save_credential)
+                self.app.push_screen(CredentialEditor(credential=credential, backend=self.backend), callback=self.handle_save_credential)
             else:
                 self.notify(message=t(t.ERR_NO_FILE_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
             
@@ -998,7 +1042,7 @@ class KrestTui(App):
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
         yield Footer()
-        yield Static("File" + ": -", id="opened_file_name")
+        yield Static(t(t.FILE) + ": -", id="opened_file_name")
         yield DataTable(id="endpoints_data_table")
 
     @on(events.Mount)
@@ -1277,8 +1321,19 @@ class KrestTui(App):
         self.push_screen(OpenFileDialog(), callback=handle_file_open_dialog)
 
 def tui():
-    # setup_logging()
-    # logging.info('TUI: Start...')
+    parser = argparse.ArgumentParser(description="Krest terminal UI")
+    parser.add_argument("--debug", "-d", action="store_true", help="Set backend debug level to 2")
+    parser.add_argument("--debug_level", type=int, metavar="INTEGER", help="Set backend debug level (overrides --debug)")
+    args = parser.parse_args()
+
+    if args.debug_level:
+        setup_logging(log_levels.get(args.debug_level, logging.CRITICAL))
+    elif args.debug:
+        setup_logging(logging.DEBUG)
+    else:
+       logging.disable(logging.CRITICAL)
+
+    logging.info('TUI: Start...')
     krest_main_page = None
     try:
         krest_main_page = KrestTui()
@@ -1286,7 +1341,7 @@ def tui():
     finally:
         krest_main_page = None
         gc.collect()
-    # logging.info('TUI: End.')
+    logging.info('TUI: End.')
 
 def main():
     tui()

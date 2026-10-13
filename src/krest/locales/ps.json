@@ -79,7 +79,6 @@
   "BROWSE": "کتل",
   "PASSWORD": "پټنوم",
   "TOKEN_URL": "د توکن URL",
-  "SCOPE": "ساحه",
   "CLIENT_ID": "پیرودونکي ID",
   "CLIENT_SECRET": "پیرودونکي راز",
   "CREDENTIAL_EDITOR": "د اعتبار ایډیټر",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "فایل دمخه شتون لري او بیا به ولیکل شي. ایا غواړئ دوام ورکړئ؟",
   "FILE_LOADED": "فایل بار شو: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "د اعتبارنامو اداره کول",
-  "USERNAME": "کارن نوم"
+  "USERNAME": "کارن نوم",
+  "FILE": "فایل"
 }

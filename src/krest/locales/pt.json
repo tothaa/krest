@@ -79,7 +79,6 @@
   "BROWSE": "Procurar",
   "PASSWORD": "Senha",
   "TOKEN_URL": "URL do Token",
-  "SCOPE": "Escopo",
   "CLIENT_ID": "ID do Cliente",
   "CLIENT_SECRET": "Segredo do Cliente",
   "CREDENTIAL_EDITOR": "Editor de Credenciais",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "O arquivo já existe e será substituído. Deseja continuar?",
   "FILE_LOADED": "Arquivo carregado: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Gerenciar credenciais",
-  "USERNAME": "Nome de usuário"
+  "USERNAME": "Nome de usuário",
+  "FILE": "Arquivo"
 }

@@ -79,7 +79,6 @@
   "BROWSE": "Преглед",
   "PASSWORD": "Парола",
   "TOKEN_URL": "URL на токена",
-  "SCOPE": "Обхват (Scope)",
   "CLIENT_ID": "Client ID",
   "CLIENT_SECRET": "Client Secret",
   "CREDENTIAL_EDITOR": "Редактор на акредитиви",
@@ -107,5 +106,6 @@
   "FILE_EXISTS": "Файлът вече съществува и ще бъде презаписан. Продължаване?",
   "FILE_LOADED": "Файлът е зареден: [b]{file_path}[/b].",
   "MANAGE_CREDENTIALS": "Управление на идентификационни данни",
-  "USERNAME": "Потребителско име"
+  "USERNAME": "Потребителско име",
+  "FILE": "Файл"
 }

@@ -10,6 +10,7 @@ from typing import Callable, List, Dict, Optional, Any, Self
 from enum import Enum
 from datetime import datetime
 from importlib.metadata import version
+from copy import deepcopy
 import logging
 import secrets
 import httpx
@@ -160,7 +161,7 @@ class KrestBackend:
         self.file_path: str|None = None
         self.file_password: str|None = None
         self.dirty_bit: int|None = None
-        self.file_data: Dict[str, Any]|None = EMPTY_FILE_DATA.copy()
+        self.file_data: Dict[str, Any]|None = deepcopy(EMPTY_FILE_DATA)
 
     def delete_endpoint(self, id: int) -> None:
         """Delete an endpoint from the file data."""
@@ -232,7 +233,7 @@ class KrestBackend:
 
     def create_file(self, file_path: str|None = None, file_password: str|None = None):
         """Create an Empty File; """
-        self.file_data = EMPTY_FILE_DATA.copy()
+        self.file_data = deepcopy(EMPTY_FILE_DATA)
         self.select_file(file_path, file_password)
         self.save_file()
 
@@ -248,7 +249,7 @@ class KrestBackend:
         if not self.file_data:
             raise ValueError(t(t.ERR_NODATA))
 
-        os.makedirs(os.path.dirname(self.file_path), exist_ok=True)
+        Path(self.file_path).parent.mkdir(parents=True, exist_ok=True) # check if parent dir exists and create.
 
         salt = secrets.token_bytes(16)
         key = self.derive_key(self.file_password, salt)
@@ -272,6 +273,9 @@ class KrestBackend:
     def load_file(self):
         """Load the file data from the specified file path with decryption."""
 
+        self.file_data = deepcopy(EMPTY_FILE_DATA)
+        self.dirty_bit = None
+
         with open(self.file_path, "rb") as f:
             encrypted_data = f.read()
         magic_bytes, salt, iv, ciphertext = encrypted_data[:7], encrypted_data[7:23], encrypted_data[23:35], encrypted_data[35:]
@@ -285,17 +289,10 @@ class KrestBackend:
             raise ValueError(t(t.ERR_INVALID_PASSWD))
         self.file_data = json.loads(json_bytes)
 
-        self.dirty_bit = None
-
     def log_response(self, call_type: str, endpoint_id: int, response: httpx.Response, endpoint: dict|None = None, credential: dict|None = None):
         """Add a call with response to the History."""
 
         next_id = self.file_data["max_call_history_id"] + 1
-
-        # try:
-        #     content = response.json()
-        # except ValueError:
-        #     content = response.text
 
         cookie_list = [vars(c) for c in response.cookies.jar]
 
@@ -304,14 +301,10 @@ class KrestBackend:
             "call_type": call_type,
             "endpoint_id": endpoint_id,
             "run_date": datetime.now().isoformat(),
-            "endpoint": (endpoint or {}).copy(),
-            "credential": (credential or {}).copy(),
+            "endpoint": deepcopy(endpoint or {}),
+            "credential": deepcopy(credential or {}),
             "elapsed_time": response.elapsed.total_seconds() if response.elapsed else 0,
-            # "request_url": str(response.request.url),
-            # "request_headers": dict(response.request.headers),                       - endpoint should include
-            # "request_method": response.request.method,                               - endpoint should include
-            # "request_body": response.request.body if response.request.body else "",  - endpoint should include
-            #"response_url": str(response.url),
+            # "response_url": str(response.url),
             "response_status_code": response.status_code,
             "response_reason_phrase": response.reason_phrase,
             "response_content_length": len(response.content) if response.content else 0,
@@ -322,16 +315,15 @@ class KrestBackend:
             "cookies": cookie_list,
             "response_body": response.text,
             "response_content_base64": base64.b64encode(response.content).decode("ascii"),  # Original byte Data: base64.b64decode(response_content_base64)
-            # "response_json": response.json(),
             "response_http_version": response.http_version,
-            "response_links": response.links.copy(),
+            "response_links": deepcopy(response.links),
             "response_has_redirect_location": response.has_redirect_location,
         }
 
         self.file_data["call_history"].append(history_record)
         self.file_data["max_call_history_id"] = next_id
 
-        logging.debug(history_record)
+        logging.debug(history_record) # Note: might save sensitive data to logs. TODO: review, if we really want this.
 
         return next_id
 
@@ -352,8 +344,8 @@ class KrestBackend:
         transport = httpx.HTTPTransport(local_address="0.0.0.0")  # Force IPv4 transport
 
         auth = None
-        request_headers = endpoint.get("headers", {})
-        request_data = endpoint.get("body")
+        request_headers = deepcopy(endpoint.get("headers", {}))   # deapcopy readonly in run_endpoint
+        request_data = deepcopy(endpoint.get("body"))             # deapcopy readonly in run_endpoint
         credential_id = endpoint.get("credential_id", None)
         credential = self.get_credential(credential_id)
         credential_type = None
@@ -363,14 +355,14 @@ class KrestBackend:
         if credential_type == CredentialType.BASIC.value:
             auth = httpx.BasicAuth(credential.get("username", ""), credential.get("password", ""))
 
-        if credential_type == CredentialType.DIGEST.value:
+        elif credential_type == CredentialType.DIGEST.value:
             auth = httpx.DigestAuth(username=credential.get("username", ""), password=credential.get("password", ""))
 
-        # if credential_type == CredentialType.HEADER_KEY.value:
+        # elif credential_type == CredentialType.HEADER_KEY.value:
         #     auth = None
         #     headers[credential.get("username")] = credential.get("password")
 
-        if credential_type == CredentialType.OAUTH2.value:
+        elif credential_type == CredentialType.OAUTH2.value:
 
             token_body = credential.get("token_body", None)
             token_headers = credential.get("token_headers", None)
@@ -402,6 +394,7 @@ class KrestBackend:
                 logging.debug('got token response.')
 
             self.log_response(t(t.TOKEN_REQUEST), endpoint_id, token_response, endpoint, credential)
+            self.dirty_bit = True
             token_response.raise_for_status()
 
             token_json = token_response.json()
@@ -413,6 +406,11 @@ class KrestBackend:
 
             auth = None
             request_headers["Authorization"] = f"Bearer {access_token}"
+
+        elif not credential_type:
+            pass
+        else:
+            raise Exception(t(t.ERR_CREDENTIAL_TYPE, credential_type=credential_type)
 
         response = None
         with httpx.Client(event_hooks=hooks, transport=transport) as client:

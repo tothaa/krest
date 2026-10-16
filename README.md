@@ -62,6 +62,7 @@ minimal backend, minimal TUI
 ### Next
 * [x] code quality: improved logging, log-level settings ~~~into project file~~~ command line parameter
 * [ ] code quality: update developer test cases, review type annotations
+* [ ] code quality: review copy and deepcopy, when returned a copy, when returned a reference - and if dirty bit updated correctly.
 * [ ] GUI: adding KDE/Kirigami Qt-based ui implementation
 * [ ] TUI: filter, sort of Endpoints, Credentials, History
 * [ ] configuration: option for backups control

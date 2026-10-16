@@ -46,3 +46,4 @@ data/
 .benchmarks/
 .benchmarks
 .env
+*.kate-swp

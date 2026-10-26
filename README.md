@@ -16,7 +16,7 @@ The pip will also automatically install the other dependencies: httpx, cryptogra
 
 ### Install from PyPi
 Install from https://pypi.org/ central repository:
-> pip install krest-utils
+> python -m pip install krest-utils
 
 ### Launcher Icon and File Associations
 Run script for setting up the icon and file associations:

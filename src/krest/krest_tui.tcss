@@ -69,6 +69,10 @@ Button:hover {
     border: round white;
 }
 
+EndpointEditor .multipart-actions Button:hover {
+    border: none;
+}
+
 .input-row-left {
     width: 1fr;
     margin-right: 1;

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=KREST
+Comment=Open a KREST document in a terminal
+Exec=krest-tui -f %f
+TryExec=krest-tui
+Icon=krest
+Type=Application
+Terminal=true
+NoDisplay=true
+MimeType=application/x-krest;

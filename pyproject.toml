@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "krest-utils"
-version = "1.0.3"
+version = "1.0.4"
 description = "KREST - call REST endpoints with faith"
 requires-python = ">=3.11"
 authors = [
@@ -19,7 +19,7 @@ classifiers = [
     "Intended Audience :: Developers",
     "Topic :: Utilities",
     "Programming Language :: Python :: 3",
-    "Operating System :: POSIX :: Linux",
+    "Operating System :: OS Independent",
 ]
 dependencies = [
     "httpx[http2]",
@@ -31,19 +31,28 @@ dependencies = [
 krest = "krest.krest_tui:tui"
 #krest = "krest.krest_qt:main"
 krest-tui = "krest.krest_tui:tui"
+krest-post-install = "krest_scripts.krest_post_install:main"
 #krest-qt = "krest.krest_qt:main"
 #krest-gui = "krest.krest_qt:main"
 
 [tool.setuptools]
-packages = ["krest"]
-package-dir = {"" = "src"}
+packages = ["krest", "krest_scripts"]
+package-dir = {"" = "src", "krest_scripts" = "scripts"}
 include-package-data = true
 
-[tool.setuptools.data-files]
-"share/applications" = ["src/krest/krest_tui.tcss"]
-
 [tool.setuptools.package-data]
-krest = ["locales/*.json"]
+krest = ["locales/*.json", "krest_tui.tcss", "qml/*"]
+
+[tool.setuptools.data-files]
+"share/applications" = ["packaging/unix/org.kde.krest.desktop", "packaging/unix/org.kde.krest.file.desktop"]
+"share/mime/packages" = ["packaging/unix/krest.xml"]
+"share/icons/hicolor/256x256/apps" = ["packaging/unix/krest.png"]
+"share/icons/hicolor/256x256/mimetypes" = ["packaging/unix/application-x-krest.png"]
+"share/krest" = [
+    "packaging/unix/krest-icon-dark2-256.png",
+    "packaging/windows/krest-windows-icon-dark2.ico",
+    "packaging/macos/krest.icns",
+]
 
 [project.optional-dependencies]
 dev = [

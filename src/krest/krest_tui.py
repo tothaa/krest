@@ -4,13 +4,14 @@ import argparse
 import gc
 import getpass
 import sys
-from typing import Iterable, AnyStr, Literal
+from typing import Callable, Iterable, AnyStr, Literal
 from importlib.metadata import version
 from functools import partial
 from copy import deepcopy
 import traceback
 import ast
 import json
+import re
 from pathlib import Path
 import logging
 from rich.text import Text
@@ -19,11 +20,11 @@ from textual.binding import Binding
 from textual.containers import Vertical, VerticalScroll, Horizontal
 from textual.screen import ModalScreen, Screen
 from textual.widget import Widget
-from textual.widgets import Checkbox, DirectoryTree, Static, Button, Footer, Header, Label, Input, TextArea, DataTable, Select, Rule, Pretty
+from textual.widgets import LoadingIndicator, Checkbox, DirectoryTree, Static, Button, Footer, Header, Label, Input, TextArea, DataTable, Select, Rule, Pretty
 from textual import on
 from textual import events
 
-from krest.krest_backend import KrestBackend, METHODS, BodyType, ValueType, MultipartBody, CredentialType, FILE_EXTENSION, developer_log, empty_endpoint, empty_credential, setup_logging, LOG_LEVELS
+from krest.krest_backend import KrestBackend, METHODS, BodyType, ValueType, MultipartBody, CredentialType, FILE_EXTENSION, developer_log, empty_endpoint, empty_credential, empty_workflow, setup_logging, LOG_LEVELS
 from krest.translations import t
 
 ASCII_LOGO = r"""[blue]
@@ -166,6 +167,51 @@ class FoldersDirectoryTree(DirectoryTree):
         return [path for path in paths if path.is_dir()]
 
 
+class ExecutionProgress(ModalScreen):
+    """Keep execution feedback animated while a blocking backend call runs."""
+
+    DEFAULT_CSS = """
+    ExecutionProgress { align: center middle; }
+    ExecutionProgress > Vertical {
+        width: 50;
+        height: auto;
+        padding: 1 2;
+        border: round $accent;
+        background: $surface;
+    }
+    ExecutionProgress LoadingIndicator { height: 3; }
+    """
+
+    def __init__(self, operation: Callable[[], object], kind: str, record_id):
+        super().__init__()
+        self.operation = operation
+        self.kind = kind
+        self.record_id = record_id
+
+    def compose(self) -> ComposeResult:
+        with Vertical():
+            yield Label(t(t.EXECUTE))
+            yield LoadingIndicator()
+
+    def on_mount(self) -> None:
+        self.run_worker(self.execute, thread=True)
+
+    def execute(self) -> None:
+        try:
+            self.operation()
+        except Exception as error:
+            logging.error("TUI: Executing %s failed (%s)", self.kind, type(error).__name__)
+            self.app.call_from_thread(self.notify, traceback.format_exc(), title=t(t.ERROR), severity="error", timeout=ERROR_NOTE_TIMEOUT)
+        else:
+            logging.info("TUI: %s execution succeeded id=%s", self.kind, self.record_id)
+            self.app.call_from_thread(self.notify, message=t(t.RUN_SUCCESS), title=t(t.INFORMATION), severity="information", markup=True)
+        finally:
+            self.app.call_from_thread(self.close_progress)
+
+    def close_progress(self) -> None:
+        self.dismiss()
+
+
 class About(ModalScreen):
 
     BINDINGS = [
@@ -263,8 +309,7 @@ class CallHistoryDetailsViewer(ModalScreen):
                 yield LineDisplay(label=field, value=record[field])
 
         yield Label(t(t.HEADERS))
-        yield TextArea(json.dumps(record.get("response_headers") or {}, indent=4),
-                       show_line_numbers=True, read_only=True, language="json")
+        yield TextArea(json.dumps(record.get("response_headers") or {}, indent=4), show_line_numbers=True, read_only=True, language="json")
 
         response_type = record.get("response_type", endpoint.get("response_type", ValueType.TEXT.value))
         yield LineDisplay(label=t(t.RESPONSE_TYPE), value=response_type)
@@ -272,12 +317,10 @@ class CallHistoryDetailsViewer(ModalScreen):
         if response_type == ValueType.BINARY.value:
             yield HistoryDownloadButton(record.get("response_content_base64"), id="history-response-download")
         else:
-            yield TextArea(str(record.get("response_body") or ""),
-                           show_line_numbers=True, read_only=True, id="history-response-body")
+            yield TextArea(str(record.get("response_body") or ""), show_line_numbers=True, read_only=True, id="history-response-body")
 
         yield Label(t(t.COOKIES))
-        yield TextArea(json.dumps(record.get("cookies") or [], indent=4),
-                       show_line_numbers=True, read_only=True, language="json")
+        yield TextArea(json.dumps(record.get("cookies") or [], indent=4), show_line_numbers=True, read_only=True, language="json")
 
         yield Rule(line_style="heavy")
         yield Label(t(t.ENDPOINT_DETAILS))
@@ -306,6 +349,16 @@ class CallHistoryDetailsViewer(ModalScreen):
         yield Label(t(t.CREDENTIAL_DETAILS))
         yield Rule(line_style="heavy")
         yield Pretty(record.get("credential") or {})
+
+        yield Rule(line_style="heavy")
+        yield Label(t(t.VARIABLES))
+        yield Rule(line_style="heavy")
+        yield TextArea(json.dumps(record.get("variables_curr") or {}, indent=4, ensure_ascii=False), show_line_numbers=True, read_only=True, language="json", id="history-variables")
+
+        yield Rule(line_style="heavy")
+        yield Label(t(t.UPDATED_VARIABLES))
+        yield Rule(line_style="heavy")
+        yield TextArea(json.dumps(record.get("variables_updated") or {}, indent=4, ensure_ascii=False), show_line_numbers=True, read_only=True, language="json", id="history-variables-updated")
 
     @on(Button.Pressed, ".history-download")
     def download_content(self, event: Button.Pressed) -> None:
@@ -671,6 +724,13 @@ class EndpointEditor(ModalScreen):
                     classes="height10"
             )
 
+            yield Label(t(t.SET_VARIABLES) + ": ", classes="input-row-left")
+            yield TextArea.code_editor(
+                name=t(t.SET_VARIABLES),
+                text=json.dumps(self.endpoint_curr.get("set_variables") or {}, indent=4),
+                id="set_variables", language="json", show_line_numbers=True, classes="height10",
+            )
+
             with Horizontal(classes="input-row"):
                 yield Label(t(t.BODY_TYPE) + ": ", classes="input-row-left")
                 yield Select(
@@ -893,6 +953,18 @@ class EndpointEditor(ModalScreen):
             event.stop()
             return
 
+        try:
+            set_variables = json.loads(self.query_one("#set_variables", TextArea).text)
+            if not isinstance(set_variables, dict):
+                raise ValueError(t(t.ERR_VARIABLES_FORMAT))
+            if not all(isinstance(k, str) and isinstance(v, str) for k, v in set_variables.items()):
+                raise ValueError(t(t.ERR_VARIABLE_NOT_STRING))
+        except (ValueError, TypeError) as e:
+            logging.warning("TUI: Invalid endpoint set variables (%s)", type(e).__name__)
+            self.notify(t(t.SET_VARIABLES) + ': ' + str(e), title=t(t.ERROR), severity="error", timeout=ERROR_NOTE_TIMEOUT)
+            event.stop()
+            return
+
         credential_id = self.query_one("#credential_id", Select).value
         if self.query_one("#credential_id", Select).is_blank():
             credential_id = None
@@ -917,6 +989,7 @@ class EndpointEditor(ModalScreen):
         self.endpoint_curr["ignore_proxy"] = self.query_one("#ignore_proxy", Select).value
         self.endpoint_curr["labels"] = endpoint_labels_list
         self.endpoint_curr["headers"] = endpoint_headers_dict
+        self.endpoint_curr["set_variables"] = set_variables
         self.endpoint_curr["body_type"] = self.query_one("#body_type", Select).value
         self.endpoint_curr["body"] = body
 
@@ -1148,9 +1221,8 @@ class SelectFileDialog(ModalScreen):
     @on(Button.Pressed, "#select-btn")
     def action_close_dialog(self) -> None:
         if self.selected_path:
-            if self.directories_only and self.selected_path.is_dir() \
-               or not self.directories_only and self.selected_path.is_file():
-                    self.dismiss(self.selected_path)
+            if self.directories_only and self.selected_path.is_dir() or not self.directories_only and self.selected_path.is_file():
+                self.dismiss(self.selected_path)
 
     @on(Button.Pressed, "#cancel-btn")
     def action_cancel_dialog(self) -> None:
@@ -1323,6 +1395,12 @@ class CredentialEditor(ModalScreen):
             ))
 
         if credential_type in (CredentialType.BASIC.value, CredentialType.DIGEST.value, CredentialType.OAUTH2.value):
+            dialog_content.mount(Label(t(t.SET_VARIABLES) + ":"))
+            dialog_content.mount(TextArea.code_editor(
+                text=json.dumps(self.credential.get("set_variables") or {}, indent=4),
+                name=t(t.SET_VARIABLES), id="set_variables", language="json",
+                show_line_numbers=True, classes="height10",
+            ))
             for field, label, default in (
                 ("follow_redirects", t(t.ALLOW_REDIRECTS), True),
                 ("ignore_proxy", t(t.IGNORE_PROXY), False),
@@ -1395,6 +1473,19 @@ class CredentialEditor(ModalScreen):
     def action_apply(self, event: Button.Pressed) -> None:
         credential_type = self.credential.get("credential_type", None)
 
+        if credential_type in (CredentialType.BASIC.value, CredentialType.DIGEST.value, CredentialType.OAUTH2.value):
+            try:
+                set_variables = json.loads(self.query_one("#set_variables", TextArea).text)
+                if not isinstance(set_variables, dict):
+                    raise ValueError(t(t.ERR_VARIABLES_FORMAT))
+                if not all(isinstance(k, str) and isinstance(v, str) for k, v in set_variables.items()):
+                    raise ValueError(t(t.ERR_VARIABLE_NOT_STRING))
+            except (ValueError, TypeError) as e:
+                logging.warning("TUI: Invalid credential set variables (%s)", type(e).__name__)
+                self.notify(t(t.SET_VARIABLES) + ': ' + str(e), title=t(t.ERROR), severity="error", timeout=ERROR_NOTE_TIMEOUT)
+                event.stop()
+                return
+
         if credential_type in (CredentialType.BASIC.value, CredentialType.DIGEST.value):
             try:
                 credentials_labels_list = ast.literal_eval(self.query_one("#labels", Input).value)
@@ -1463,6 +1554,7 @@ class CredentialEditor(ModalScreen):
         
         self.credential["follow_redirects"] = self.query_one("#follow_redirects", Select).value
         self.credential["ignore_proxy"] = self.query_one("#ignore_proxy", Select).value
+        self.credential["set_variables"] = set_variables
         self.dismiss(self.credential)
 
 class Credentials(ModalScreen):
@@ -1564,7 +1656,7 @@ class Credentials(ModalScreen):
                 self.app.push_screen(CredentialEditor(credential=credential, backend=self.backend), callback=self.handle_save_credential)
             else:
                 self.notify(message=t(t.ERR_NO_FILE_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
-            
+
     @on(Button.Pressed, "#credentials-delete-btn")
     def action_credentials_data_table_delete_selected(self) -> None:
         def perform_delete(credential_id):
@@ -1620,6 +1712,435 @@ class Credentials(ModalScreen):
             credentials_data_table.move_cursor(row=0)
             self.credentials_data_table_selected_row = credentials_data_table.coordinate_to_cell_key(credentials_data_table.cursor_coordinate).row_key
 
+class WorkflowEditor(ModalScreen):
+    BINDINGS = [("escape", "cancel_dialog", t(t.CLOSE))]
+
+    def __init__(self, workflow=None, backend=None):
+        super().__init__()
+        self.backend = backend
+        self.workflow = deepcopy(workflow) if workflow is not None else empty_workflow()
+        self.steps = list(self.workflow.get("steps", []))
+        self.endpoints = backend.file_data.get("endpoints", []) if backend else []
+
+    def compose(self) -> ComposeResult:
+        dialog = Vertical(classes="dialog-container")
+        dialog.styles.max_height = "95%"
+        dialog.styles.overflow_y = "auto"
+        with dialog:
+            yield Label(t(t.WORKFLOW_EDITOR), classes="title")
+            yield LineInput(t(t.NAME), self.workflow.get("name", ""), id="name")
+            yield LineInput(t(t.DESC), self.workflow.get("desc", ""), id="desc")
+            yield LineInput(t(t.LABELS), self.workflow.get("labels", []), id="labels")
+            yield Label(t(t.CHOOSE_ENDPOINT))
+            yield Select(
+                [(Text(f"{endpoint.get('name', '')} ("+t(t.ID)+": {endpoint['id']})"), endpoint["id"]) for endpoint in self.endpoints],
+                id="workflow-endpoint", prompt=t(t.SEL_ENDPOINT), type_to_search=True,
+                compact=True, disabled=not self.endpoints,
+            )
+            with Horizontal(classes="input-row"):
+                yield Button(t(t.ADD_STEP), id="workflow-step-add", disabled=not self.endpoints)
+            yield Label(t(t.STEPS_IN_ORDER))
+            yield DataTable(id="workflow-steps", cursor_type="row").set_styles(height=8)
+            with Horizontal(classes="input-row"):
+                yield Button(t(t.REMOVE_STEP), id="workflow-step-remove")
+                yield Button(t(t.MOVE_UP), id="workflow-step-up")
+                yield Button(t(t.MOVE_DOWN), id="workflow-step-down")
+            with Horizontal(classes="button-container"):
+                yield Button(t(t.CANCEL), id="workflow-cancel-btn")
+                yield Button(t(t.SAVE), variant="success", id="workflow-save-btn")
+
+    def on_mount(self) -> None:
+        self.query_one("#workflow-steps", DataTable).add_columns("#", t(t.NAME), t(t.ENDPOINT_ID))
+        self.refresh_steps()
+
+    def refresh_steps(self, selected=0) -> None:
+        table = self.query_one("#workflow-steps", DataTable)
+        table.clear()
+        names = {endpoint["id"]: endpoint.get("name", "") for endpoint in self.endpoints}
+        for index, endpoint_id in enumerate(self.steps):
+            table.add_row(str(index + 1), Text(names.get(endpoint_id, t(t.ERR_MISSING_ENDPOINT))), str(endpoint_id))
+        if self.steps:
+            table.move_cursor(row=max(0, min(selected, len(self.steps) - 1)))
+        self.query_one("#workflow-step-remove", Button).disabled = not self.steps
+        self.query_one("#workflow-step-up", Button).disabled = len(self.steps) < 2
+        self.query_one("#workflow-step-down", Button).disabled = len(self.steps) < 2
+
+    @on(Button.Pressed, "#workflow-step-add")
+    def add_step(self) -> None:
+        endpoint_id = self.query_one("#workflow-endpoint", Select).value
+        if endpoint_id is not Select.BLANK:
+            self.steps.append(endpoint_id)
+            self.refresh_steps(len(self.steps) - 1)
+
+    @on(Button.Pressed, "#workflow-step-remove")
+    def remove_step(self) -> None:
+        if self.steps:
+            index = self.query_one("#workflow-steps", DataTable).cursor_row
+            self.steps.pop(index)
+            self.refresh_steps(index)
+
+    @on(Button.Pressed, "#workflow-step-up")
+    @on(Button.Pressed, "#workflow-step-down")
+    def move_step(self, event: Button.Pressed) -> None:
+        index = self.query_one("#workflow-steps", DataTable).cursor_row
+        target = index + (-1 if event.button.id == "workflow-step-up" else 1)
+        if self.steps and 0 <= target < len(self.steps):
+            self.steps[index], self.steps[target] = self.steps[target], self.steps[index]
+            self.refresh_steps(target)
+
+    @on(Button.Pressed, "#workflow-cancel-btn")
+    def action_cancel_dialog(self) -> None:
+        self.dismiss()
+
+    @on(Button.Pressed, "#workflow-save-btn")
+    def action_apply(self) -> None:
+        try:
+            labels = ast.literal_eval(self.query_one("#labels", Input).value)
+            if not isinstance(labels, list):
+                raise ValueError(t(t.ERR_LABELS_FORMAT))
+            if not all(isinstance(label, str) for label in labels):
+                raise ValueError(t(t.ERR_LABELS_STR))
+        except (ValueError, SyntaxError) as error:
+            self.notify(t(t.LABELS) + ": " + str(error), title=t(t.ERROR), severity="error")
+            return
+        self.workflow.update(
+            name=self.query_one("#name", Input).value,
+            desc=self.query_one("#desc", Input).value,
+            labels=labels,
+            steps=list(self.steps),
+        )
+        self.dismiss(self.workflow)
+
+
+class Workflows(ModalScreen):
+
+    AUTO_FOCUS = "#workflows_data_table"
+
+    BINDINGS = [
+        ("escape", "cancel_dialog", t(t.CLOSE)),
+        ("r", "refresh_content", t(t.REFRESH_WORKFLOW)),
+        ("m", "workflows_data_table_modify_selected", t(t.MODIFY_WORKFLOW)),
+        ("a", "workflows_data_table_add", t(t.NEW_WORKFLOW)),
+        ("d", "workflows_data_table_delete_selected", t(t.DELETE)),
+        ("x", "workflows_data_table_execute_selected", t(t.EXECUTE)),
+    ]
+
+    def __init__(self, backend, ignore_columns:list|None=None):
+        super().__init__()
+        self.backend = backend
+        self.backend.file_data.setdefault("workflows", [])
+        self.backend.file_data.setdefault("max_workflow_id", -1)
+        self.workflows_data_table_selected_row = None
+        self.workflows_data_table_sort_column: str | None = None
+        self.workflows_data_table_sort_reverse = False
+
+        self.ignore_columns = []
+        if ignore_columns:
+            self.ignore_columns = ignore_columns
+
+    def compose(self) -> ComposeResult:
+        with Vertical():
+            yield Header(show_clock=True)
+            yield Label(t(t.MANAGE_WORKFLOWS))
+            yield Input(id="workflows_filter", compact=True, placeholder=t(t.SEARCH_LABEL))
+            yield DataTable(id="workflows_data_table")
+            yield Static("")
+            with Horizontal(classes="button-container"):
+                yield Button(t(t.CLOSE), variant="default", id="workflows-cancel-btn")
+                yield Button(t(t.DELETE), variant="error", id="workflows-delete-btn")
+                yield Button(t(t.MODIFY), variant="primary", id="workflows-edit-btn")
+                yield Button(t(t.NEW), variant="success", id="workflows-add-btn")
+                yield Button(t(t.EXECUTE), variant="warning", id="workflow-execute-btn")
+
+            yield Footer()
+
+    @on(Input.Changed, "#workflows_filter")
+    def filter_workflows(self, event: Input.Changed) -> None:
+        self.action_refresh_content()
+
+    @on(Input.Submitted, "#workflows_filter")
+    def filter_submitted(self, event: Input.Submitted) -> None:
+        self.query_one("#workflows_data_table", DataTable).focus()
+
+    @on(DataTable.RowHighlighted, "#workflows_data_table")
+    @on(DataTable.RowSelected, "#workflows_data_table")
+    def update_selected_row(self, event: DataTable.RowHighlighted | DataTable.RowSelected):
+        self.workflows_data_table_selected_row = event.row_key
+
+    @on(DataTable.HeaderSelected, "#workflows_data_table")
+    def sort_workflows_by_header(self, event: DataTable.HeaderSelected) -> None:
+        if event.column_key.value == ROW_NUMBER_COLUMN:
+            return
+
+        if self.workflows_data_table_sort_column == event.column_key.value:
+            self.workflows_data_table_sort_reverse = not self.workflows_data_table_sort_reverse
+        else:
+            self.workflows_data_table_sort_column = event.column_key.value
+            self.workflows_data_table_sort_reverse = False
+
+        sort_data_table(self.query_one("#workflows_data_table", DataTable), event.column_key.value, self.workflows_data_table_sort_reverse)
+
+        if self.workflows_data_table_selected_row is not None:
+            table = self.query_one("#workflows_data_table", DataTable)
+            table.move_cursor(row=table.get_row_index(self.workflows_data_table_selected_row), scroll=True)
+
+    def handle_save_workflow(self, workflow):
+        if workflow:
+            try:
+                self.backend.save_workflow(workflow)
+                self.notify(message=t(t.DATA_UPD), title=t(t.INFORMATION), severity="information", markup=True)
+                self.action_refresh_content()
+            except Exception as e:
+                logging.error("TUI: Saving workflow failed (%s)", type(e).__name__)
+                error_stack = traceback.format_exc()
+                self.notify(str(error_stack), title=t(t.ERROR), severity="error", timeout=ERROR_NOTE_TIMEOUT)
+        else:
+            self.notify(t(t.NO_UPD), title=t(t.INFORMATION), severity="information")
+
+    @on(Button.Pressed, "#workflows-add-btn")
+    def action_workflows_data_table_add(self) -> None:
+        if self.backend.file_path:
+            self.app.push_screen(WorkflowEditor(workflow=None, backend=self.backend), callback=self.handle_save_workflow)
+        else:
+            self.notify(message=t(t.ERR_NO_FILE_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
+
+    @on(Button.Pressed, "#workflows-edit-btn")
+    def action_workflows_data_table_modify_selected(self) -> None:
+        if self.workflows_data_table_selected_row is None:
+            self.notify(message=t(t.ERR_NO_ROW_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
+        else:
+            if self.backend.file_path:
+                workflow_id = self.workflows_data_table_selected_row.value
+                workflow = self.backend.get_workflow(workflow_id)
+                self.app.push_screen(WorkflowEditor(workflow=workflow, backend=self.backend), callback=self.handle_save_workflow)
+            else:
+                self.notify(message=t(t.ERR_NO_FILE_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
+
+    @on(Button.Pressed, "#workflow-execute-btn")
+    def action_workflows_data_table_execute_selected(self) -> None:
+        if self.workflows_data_table_selected_row is None:
+            self.notify(message=t(t.ERR_NO_ROW_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
+        else:
+            record_id = self.workflows_data_table_selected_row.value
+            logging.info("TUI: Executing selected workflow id=%s", record_id)
+            self.app.push_screen(ExecutionProgress(
+                partial(self.backend.run_workflow, record_id), "workflow", record_id,
+            ))
+
+    @on(Button.Pressed, "#workflows-delete-btn")
+    def action_workflows_data_table_delete_selected(self) -> None:
+        def perform_delete(workflow_id):
+            if workflow_id is not None:
+                try:
+                    self.backend.delete_workflow(workflow_id)
+                    self.notify(message=t(t.DATA_DLTD), title=t(t.INFORMATION), severity="warning", markup=True)
+                    self.action_refresh_content()
+                except Exception as e:
+                    logging.error("TUI: Deleting workflow failed (%s)", type(e).__name__)
+                    self.notify(str(e), title=t(t.ERROR), severity="error", timeout=ERROR_NOTE_TIMEOUT)
+            else:
+                self.notify(t(t.NO_UPD), title=t(t.INFORMATION), severity="information")
+
+        if self.workflows_data_table_selected_row is None:
+            self.notify(message=t(t.ERR_NO_ROW_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
+        else:
+            if self.backend.file_path:
+                workflow_id = self.workflows_data_table_selected_row.value
+                self.app.push_screen(
+                    YesNoQuestion(t(t.CONFIRM_DELETE)),
+                    callback=lambda confirmed: perform_delete(workflow_id) if confirmed else self.notify(t(t.NO_UPD), title=t(t.INFORMATION), severity="information")
+                )
+            else:
+                self.notify(message=t(t.ERR_NO_FILE_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
+
+    @on(events.Mount)
+    def loading_dialog(self, event: events.Mount):
+        self.action_refresh_content()
+
+    @on(Button.Pressed, "#workflows-cancel-btn")
+    def action_cancel_dialog(self) -> None:
+        self.dismiss()
+
+    def action_refresh_content(self, column_ordering_function=None):
+
+        workflows_data_table = self.query_one("#workflows_data_table", DataTable)
+        filter_text = self.query_one("#workflows_filter", Input).value.strip().casefold()
+        columns, rows, keys = format_data_table(
+            self.backend.file_data["workflows"],
+            column_ordering_function=column_ordering_function,
+            ignore_columns=self.ignore_columns
+        )
+        refresh_data_table(
+            workflows_data_table, columns, rows, keys,
+            filter_text=filter_text,
+            sort_column=self.workflows_data_table_sort_column,
+            sort_reverse=self.workflows_data_table_sort_reverse,
+        )
+
+        self.workflows_data_table_selected_row = None
+        if workflows_data_table.row_count:
+            workflows_data_table.move_cursor(row=0)
+            self.workflows_data_table_selected_row = workflows_data_table.coordinate_to_cell_key(workflows_data_table.cursor_coordinate).row_key
+
+class VariableEditor(ModalScreen):
+    BINDINGS = [("escape", "cancel_dialog", t(t.CANCEL))]
+
+    def __init__(self, name=None, value="", existing_names=()):
+        super().__init__()
+        self.variable_name = name
+        self.value = value
+        self.existing_names = set(existing_names) - {name}
+
+    def compose(self) -> ComposeResult:
+        with Vertical(classes="dialog-container"):
+            yield Label(t(t.VARIABLE_EDITOR), classes="title")
+            yield Label(t(t.NAME))
+            yield Input(value=self.variable_name or "", id="variable-name")
+            yield Label(t(t.VALUE_TYPE))
+            yield Select([(t(t.TEXT), "text"), (t(t.JSON), "json")], value="text" if isinstance(self.value, str) else "json", allow_blank=False, id="variable-value-type")
+            yield Label(t(t.VALUE))
+            yield TextArea(self.value if isinstance(self.value, str) else json.dumps(self.value, ensure_ascii=False), id="variable-value").set_styles(height=6)
+            with Horizontal(classes="button-container"):
+                yield Button(t(t.CANCEL), id="variable-cancel-btn")
+                yield Button(t(t.SAVE), variant="success", id="variable-save-btn")
+
+    @on(Button.Pressed, "#variable-save-btn")
+    def save_variable(self) -> None:
+        name = self.query_one("#variable-name", Input).value.strip()
+        if not re.fullmatch(r"[a-zA-Z_][a-zA-Z0-9_]*", name):
+            self.notify(t(t.ERR_VARIABLE_NAME), title=t(t.ERROR), severity="error")
+            return
+        if name in self.existing_names:
+            self.notify(t(t.ERR_UNIQUE_ATTR_NAME), title=t(t.ERROR), severity="error")
+            return
+        value = self.query_one("#variable-value", TextArea).text
+        if self.query_one("#variable-value-type", Select).value == "json":
+            try:
+                value = json.loads(value)
+            except ValueError as error:
+                self.notify(str(error), title=t(t.ERROR), severity="error", markup=False)
+                return
+        self.dismiss((name, value))
+
+    @on(Button.Pressed, "#variable-cancel-btn")
+    def action_cancel_dialog(self) -> None:
+        self.dismiss()
+
+
+class Variables(ModalScreen):
+    AUTO_FOCUS = "#variables_data_table"
+    BINDINGS = [
+        ("escape", "cancel_dialog", t(t.CLOSE)),
+        ("a", "add_variable", t(t.NEW_VARIABLE)),
+        ("m", "edit_variable", t(t.MODIFY_VARIABLE)),
+        ("d", "delete_variable", t(t.DELETE)),
+    ]
+
+    def __init__(self, backend):
+        super().__init__()
+        self.backend = backend
+
+    def compose(self) -> ComposeResult:
+        with Vertical():
+            yield Header(show_clock=True)
+            yield Label(t(t.MANAGE_VARIABLES))
+            yield Input(id="variables_filter", compact=True, placeholder=t(t.SEARCH_LABEL))
+            yield DataTable(id="variables_data_table")
+            with Horizontal(classes="button-container"):
+                yield Button(t(t.CLOSE), id="variables-close-btn")
+                yield Button(t(t.DELETE), variant="error", id="variables-delete-btn")
+                yield Button(t(t.MODIFY), variant="primary", id="variables-edit-btn")
+                yield Button(t(t.NEW), variant="success", id="variables-add-btn")
+            yield Footer()
+
+    def on_mount(self) -> None:
+        table = self.query_one("#variables_data_table", DataTable)
+        table.add_columns(t(t.NAME), t(t.VALUE))
+        table.cursor_type = "row"
+        table.zebra_stripes = True
+        self.refresh_variables()
+
+    @on(Input.Changed, "#variables_filter")
+    def filter_variables(self, event: Input.Changed) -> None:
+        self.refresh_variables()
+
+    @on(Input.Submitted, "#variables_filter")
+    def filter_submitted(self, event: Input.Submitted) -> None:
+        self.query_one("#variables_data_table", DataTable).focus()
+
+    def refresh_variables(self, selected_name=None) -> None:
+        table = self.query_one("#variables_data_table", DataTable)
+        filter_text = self.query_one("#variables_filter", Input).value.strip().casefold()
+        table.clear()
+        visible_names = []
+        for name, value in self.backend.file_data.get("variables", {}).items():
+            text = value if isinstance(value, str) else json.dumps(value, ensure_ascii=False)
+            if filter_text and not any(filter_text in cell.casefold() for cell in (name, text)):
+                continue
+            table.add_row(Text(name), Text(text), key=name)
+            visible_names.append(name)
+        if table.row_count:
+            row = table.get_row_index(selected_name) if selected_name in visible_names else 0
+            table.move_cursor(row=row)
+
+    def selected_name(self):
+        table = self.query_one("#variables_data_table", DataTable)
+        if table.row_count:
+            coordinate = table.cursor_coordinate
+            cell_key = table.coordinate_to_cell_key(coordinate)
+            row_key = cell_key.row_key
+            name = row_key.value
+            return name
+        self.notify(t(t.ERR_NO_ROW_SELECTED), title=t(t.INFORMATION))
+        return None
+
+    def handle_save_variable(self, result, old_name=None) -> None:
+        if result is None:
+            return
+        name, value = result
+        variables = dict(self.backend.file_data.get("variables", {}))
+        if old_name is not None:
+            variables.pop(old_name, None)
+        variables[name] = value
+        self.backend.save_variables(variables)
+        self.refresh_variables(name)
+
+    @on(Button.Pressed, "#variables-add-btn")
+    def action_add_variable(self) -> None:
+        self.app.push_screen(VariableEditor(existing_names=self.backend.file_data.get("variables", {})), callback=self.handle_save_variable)
+
+    @on(Button.Pressed, "#variables-edit-btn")
+    def action_edit_variable(self) -> None:
+        name = self.selected_name()
+        if name is not None:
+            variables = self.backend.file_data.get("variables", {})
+            self.app.push_screen(VariableEditor(name, variables[name], variables), callback=partial(self.handle_save_variable, old_name=name))
+
+    # open Editor when selected:
+    # @on(DataTable.RowSelected, "#variables_data_table")
+    # def edit_selected_variable(self) -> None:
+    #     self.action_edit_variable()
+
+    @on(Button.Pressed, "#variables-delete-btn")
+    def action_delete_variable(self) -> None:
+        name = self.selected_name()
+        if name is None:
+            return
+
+        def delete_variable(confirmed):
+            if confirmed:
+                variables = dict(self.backend.file_data.get("variables", {}))
+                variables.pop(name, None)
+                self.backend.save_variables(variables)
+                self.refresh_variables()
+
+        self.app.push_screen(YesNoQuestion(t(t.CONFIRM_DELETE)), callback=delete_variable)
+
+    @on(Button.Pressed, "#variables-close-btn")
+    def action_cancel_dialog(self) -> None:
+        self.dismiss()
+
+
 class KrestTui(App):
 
     CSS_PATH = "krest_tui.tcss"
@@ -1640,6 +2161,8 @@ class KrestTui(App):
         # ("S", "endpoints_data_table_sort_by_name", "Sort by Name"),
         # ("|", "none", "║"),
         ("c", "edit_credentials", t(t.MANAGE_CREDENTIALS)),
+        ("w", "edit_workflows", t(t.MANAGE_WORKFLOWS)),
+        ("v", "edit_variables", t(t.MANAGE_VARIABLES)),
         ("h", "view_all_logs", t(t.ALL_CALL_HISTORIES)),
         ("p", "properties", t(t.PROPERTIES)),
         ("ctrl+u", "change_password", t(t.CHANGE_PASSWORD)),
@@ -1680,6 +2203,8 @@ class KrestTui(App):
             "endpoints_data_table_modify_selected",
             "endpoints_data_table_delete_selected",
             "edit_credentials",
+            "edit_workflows",
+            "edit_variables",
             "view_all_logs",
             "properties",
             "change_password",
@@ -1707,12 +2232,23 @@ class KrestTui(App):
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
-        yield Footer()
+
         yield Static(t(t.FILE) + ": -", id="opened_file_name")
         endpoints_filter = Input(id="endpoints_filter", compact=True, placeholder=t(t.SEARCH_LABEL))
         endpoints_filter.display = bool(self.backend.file_path)
         yield endpoints_filter
         yield DataTable(id="endpoints_data_table")
+
+        with Horizontal(classes="button-container", id="endpoints-actions") as endpoints_actions:
+            endpoints_actions.display = bool(self.backend.file_path)
+            yield Button(t(t.DELETE), variant="error", id="endpoints-delete-btn")
+            yield Button(t(t.MODIFY), variant="primary", id="endpoints-edit-btn")
+            yield Button(t(t.NEW), variant="success", id="endpoints-add-btn")
+            yield Button(t(t.EXECUTE), variant="warning", id="endpoints-execute-btn")
+            yield Button(t(t.CALL_HISTORY), variant="primary", id="endpoints-history-btn")
+
+        yield Footer()
+
 
     @on(events.Mount)
     def update_screen_title(self) -> None:
@@ -1784,6 +2320,7 @@ class KrestTui(App):
         else:
             self.notify(message=t(t.ERR_NO_FILE_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
 
+    @on(Button.Pressed, "#endpoints-history-btn")
     def action_endpoints_data_table_view_logs_selected(self) -> None:
         if self.endpoints_data_table_selected_row is None:
             self.notify(message=t(t.ERR_NO_ROW_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
@@ -1800,12 +2337,25 @@ class KrestTui(App):
         else:
             self.notify(message=t(t.ERR_NO_FILE_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
 
+    def action_edit_variables(self) -> None:
+        if self.backend.file_path:
+            self.push_screen(Variables(self.backend))
+        else:
+            self.notify(message=t(t.ERR_NO_FILE_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
+
+    def action_edit_workflows(self) -> None:
+        if self.backend.file_path:
+            self.push_screen(Workflows(self.backend))
+        else:
+            self.notify(message=t(t.ERR_NO_FILE_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
+
     def action_edit_credentials(self) -> None:
         if self.backend.file_path:
             self.push_screen(Credentials(self.backend))
         else:
             self.notify(message=t(t.ERR_NO_FILE_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
 
+    @on(Button.Pressed, "#endpoints-add-btn")
     def action_endpoints_data_table_add(self) -> None:
         if self.backend.file_path:
             available_credentials = [(str(credential["name"]), credential["id"]) for credential in self.backend.file_data.get("credentials")]
@@ -1813,6 +2363,7 @@ class KrestTui(App):
         else:
             self.notify(message=t(t.ERR_NO_FILE_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
 
+    @on(Button.Pressed, "#endpoints-delete-btn")
     def action_endpoints_data_table_delete_selected(self) -> None:
         def perform_delete(endpoint_id):
             if endpoint_id:
@@ -1838,6 +2389,7 @@ class KrestTui(App):
             else:
                 self.notify(message=t(t.ERR_NO_FILE_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
 
+    @on(Button.Pressed, "#endpoints-edit-btn")
     def action_endpoints_data_table_modify_selected(self) -> None:
         if self.endpoints_data_table_selected_row is None:
             self.notify(message=t(t.ERR_NO_ROW_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
@@ -1852,20 +2404,16 @@ class KrestTui(App):
                 self.notify(message=t(t.ERR_NO_FILE_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
 
 
+    @on(Button.Pressed, "#endpoints-execute-btn")
     def action_endpoints_data_table_execute_selected(self) -> None:
         if self.endpoints_data_table_selected_row is None:
             self.notify(message=t(t.ERR_NO_ROW_SELECTED), title=t(t.INFORMATION), severity="information", markup=True)
         else:
-            try:
-                id = self.endpoints_data_table_selected_row.value
-                logging.info("TUI: Executing selected endpoint id=%s", id)
-                self.backend.run_endpoint(id)
-                logging.info("TUI: Endpoint execution succeeded id=%s", id)
-                self.notify(message=t(t.RUN_SUCCESS), title=t(t.INFORMATION), severity="information", markup=True)
-            except Exception as e:
-                logging.error("TUI: Executing endpoint failed (%s)", type(e).__name__)
-                error_stack = traceback.format_exc()
-                self.notify(str(error_stack), title=t(t.ERROR), severity="error", timeout=ERROR_NOTE_TIMEOUT)
+            record_id = self.endpoints_data_table_selected_row.value
+            logging.info("TUI: Executing selected endpoint id=%s", record_id)
+            self.push_screen(ExecutionProgress(
+                partial(self.backend.run_endpoint, record_id), "endpoint", record_id,
+            ))
     '''
     def sort_reverse(self, sort_type: str):
         reverse = sort_type in self.current_sorts
@@ -1888,12 +2436,10 @@ class KrestTui(App):
         endpoints_data_table = self.query_one("#endpoints_data_table", DataTable)
         endpoints_filter = self.query_one("#endpoints_filter", Input)
         endpoints_filter.display = bool(self.backend.file_path)
+        self.query_one("#endpoints-actions", Horizontal).display = bool(self.backend.file_path)
         filter_text = endpoints_filter.value.strip().casefold()
         columns, rows, keys = format_data_table(
-            [
-                {**endpoint, "response_type": endpoint.get("response_type", ValueType.TEXT.value)}
-                for endpoint in self.backend.file_data.get("endpoints", [])
-            ],
+            [{**endpoint, "response_type": endpoint.get("response_type", ValueType.TEXT.value)} for endpoint in self.backend.file_data.get("endpoints", [])],
             column_ordering_function=column_ordering_function,
             ignore_columns=["headers", "body", "params"]
         )

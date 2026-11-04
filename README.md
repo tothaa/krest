@@ -81,14 +81,13 @@ Check the youtube channel:
 * [ ] bugfixing: TUI: improve Call History Details performance
 * [ ] bugfixing: be more consistent on how to use httpx.Client.request() function data and json attributes
 * [ ] Feature: parallel httpx calls and stress-test
-* [ ] Feature: support for variables
-  target v1.0.5
-* [ ] Feature: support for workflows, simple automated testing scripts
-  target v1.0.5
 * [ ] Feature: support for more authentication types
 * [ ] Feature: CLI interface for automation with shell scripts
 * [ ] Feature: support for httpx advanced features - http2, brotli, zstd
 * [ ] Feature: optional MCP interface
+* [ ] code quality: use response_to_dict() to add result to save_history() to remove duplicated code.
+* [ ] Feature: improved workflows/automation scripts
+* [ ] code quality: refactoring backward compatibility codes to run on file-opening at one place.
 
 ### Done
 * [x] minimal backend, minimal TUI
@@ -109,6 +108,10 @@ Check the youtube channel:
 * [x] Feature: support for multipart payload - v1.0.4
 * [x] Feature: support for receiving files - v1.0.4
 * [x] bugfixing: improve Call History Details screens: decide what to include in the history records. - v1.0.4
+* [x] Feature: support for variables - v1.0.5
+* [x] Feature: support for workflows, simple automated testing scripts - v1.0.5
+* [x] TUI: adding spinner for run_endpoint() - v1.0.5
+* [x] TUI: adding buttons on the main page - v1.0.5
 
 ### Not Doing
 * ~~cloud sync~~

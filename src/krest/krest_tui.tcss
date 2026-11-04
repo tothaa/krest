@@ -45,6 +45,10 @@ ModalScreen {
     content-align: right middle;
 }
 
+#endpoints-actions {
+    margin-bottom: 1;
+}
+
 LineDisplay{
     layout: horizontal;
     height: auto;

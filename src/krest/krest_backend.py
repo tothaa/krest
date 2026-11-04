@@ -2,11 +2,13 @@
 
 import os
 from pathlib import Path
+from string import Template
+from collections.abc import Mapping, Sequence
 import json
+import re
 import base64
 import shutil
 # import time
-import base64
 from typing import Callable, List, Dict, Optional, Any, Self
 from enum import Enum
 from datetime import datetime, timedelta
@@ -20,6 +22,7 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives import hashes
 from krest.translations import t
 
+
 print(t(t.REPLY_NAME, name=t(t.K_USER))) # testing i18n solution
 
 def developer_log(message):
@@ -29,6 +32,7 @@ def developer_log(message):
 USER_KREST_DIR = Path.home() / ".krest"
 USER_KREST_DIR.mkdir(parents=True, exist_ok=True)
 LOG_FILE = USER_KREST_DIR / 'krest.log'
+DEFAULT_OBJECT = object()
 
 LOG_LEVELS = {1: logging.DEBUG, 2: logging.INFO, 3: logging.WARNING, 4: logging.ERROR, 5: logging.CRITICAL}
 
@@ -97,6 +101,7 @@ def empty_endpoint() -> Dict[str, Any]:
         "response_type": ValueType.TEXT.value,
         "follow_redirects": True,
         "ignore_proxy": False,
+        "set_variables": {},
         "created_at": None,
         "updated_at": None,
     }
@@ -142,11 +147,23 @@ def empty_credential(credential_type: str) -> Dict[str, Any]:
             "client_secret": "",
             "follow_redirects": True,
             "ignore_proxy": False,
+            "set_variables": {},
             "created_at": None,
             "updated_at": None,
         }
 
     return empty_credential
+
+def empty_workflow() -> Dict[str, Any]:
+    return {
+        "id": None,
+        "name": "",
+        "desc": "",
+        "labels": [],
+        "steps": [],
+        "created_at": None,
+        "updated_at": None,
+    }
 
 MAGIC_BYTES = b"KREST01"
 FILE_EXTENSION = "krest"
@@ -162,10 +179,59 @@ EMPTY_FILE_DATA = {
             "max_endpoint_id": -1,
             "max_credential_id": -1,
             "max_call_history_id": -1,
+            "max_workflow_id": -1,
             "credentials": [],
             "endpoints": [],
             "call_history": [],
+            "variables": {},
+            "workflows": [],
         }
+
+def get_value_by_path(data: Any, path: str, default: Any = DEFAULT_OBJECT) -> Any:
+    """Read a value using a small JSONPath-like syntax."""
+    if not isinstance(path, str):
+        raise TypeError(t(t.ERR_PATH_NOT_STR))
+    if not path.startswith("$"):
+        raise ValueError(t(t.ERR_PATH_NOT_START_WITH_DOLLAR))
+
+    keys: list[str | int] = []
+    pos = 1
+    while pos < len(path):
+        match = re.compile(
+                r"""\.([^.\[\]]+) | \[(-?[0-9]+)\] | \['([^']*)'\] | \["([^"]*)"\]""" # .key, including hyphens and spaces | [0], [123], or [-1] | ['key'], including empty keys | ["key"], including empty keys
+                , re.VERBOSE
+            ).match(path, pos)
+        if match is None:
+            raise ValueError(t(t.ERR_INVALID_PATH, pos=str(pos), val=str(path[pos:])))
+
+        key, index, single_quoted, double_quoted = match.groups()
+        if key is not None:
+            keys.append(key)
+        elif index is not None:
+            keys.append(int(index))
+        elif single_quoted is not None:
+            keys.append(single_quoted)
+        else:
+            if double_quoted is None:
+                raise ValueError(t(t.ERR_PATH_QUOTED_NONE))
+            keys.append(double_quoted)
+
+        pos = match.end()
+
+    current = data
+    for key in keys:
+        try:
+            if isinstance(key, int):
+                if (not isinstance(current, Sequence) or isinstance(current, (str, bytes, bytearray))):
+                    raise TypeError(t(t.ERR_PATH_SEQUENCE, key=key, name=type(current).__name__))
+            elif not isinstance(current, Mapping):
+                raise TypeError(t(t.ERR_PATH_MAPPING, key=key, name=type(current).__name__))
+            current = current[key]
+        except (KeyError, IndexError, TypeError):
+            if default is DEFAULT_OBJECT:
+                raise
+            return default
+    return current
 
 
 class MultipartBody(dict):
@@ -202,8 +268,7 @@ class KrestBackend:
         file_path = os.fspath(path)
         if not isinstance(file_path, str):
             raise TypeError(t(t.ERR_INVALID_FILENAME_FORMAT))
-        if (not file_path.strip() or "\x00" in file_path
-                or os.path.basename(file_path) in ("", ".", "..")):
+        if (not file_path.strip() or "\x00" in file_path or os.path.basename(file_path) in ("", ".", "..")):
             raise ValueError(t(t.ERR_INVALID_FILENAME))
         if os.path.isdir(file_path):
             raise IsADirectoryError(t(t.ERR_DIRECTORY, file_path=file_path))
@@ -239,6 +304,43 @@ class KrestBackend:
         )
         return kdf.derive(password.encode())
 
+    @staticmethod
+    def response_to_dict(response: httpx.Response) -> dict:
+        """Convert a Response object to a Dict"""
+
+        elapsed = None
+        try:
+            elapsed = response.elapsed.total_seconds()
+        except RuntimeError:
+            elapsed = None
+
+        body_json = None
+        try:
+            body_json = response.json()
+        except ValueError:
+            body_json = None
+
+        return {
+            "response_elapsed_seconds": elapsed,
+            "response_url": str(response.url),
+            "response_status_code": response.status_code,
+            "response_reason_phrase": response.reason_phrase,
+            "response_content_length": len(response.content) if response.content else 0,
+            "response_encoding": response.encoding,
+            "response_charset_encoding": response.charset_encoding,
+            "response_headers": dict(response.headers),
+            "response_cookies": [vars(c) for c in response.cookies.jar],
+            "response_body_text": response.text,
+            "response_body_json": body_json,
+            "response_body_base64": base64.b64encode(response.content).decode("ascii"),
+            "response_http_version": response.http_version,
+            "response_links": deepcopy(response.links),
+            "response_has_redirect_location": response.has_redirect_location,
+            "response_is_redirect": response.is_redirect,
+            "response_is_error": response.is_error,
+            "response_is_success": response.is_success,
+        }
+
     def __init__(self):
         """Constructor to initialize the backend."""
         self.file_path: str|None = None
@@ -254,6 +356,76 @@ class KrestBackend:
         self.file_data["settings"] = settings
         self.dirty_bit = True
         logging.info("Settings updated")
+
+    def save_variables(self, variables: Dict[str, Any]) -> None:
+        """Replace the variables and mark the file as changed."""
+        if not isinstance(variables, dict):
+            raise TypeError(t(t.ERR_VARIABLES_FORMAT))
+        self.file_data["variables"] = deepcopy(variables)
+        self.dirty_bit = True
+
+    def substitute_variables(self, data: str | dict | list | int | float | bool | None, used_variables: dict | None = None) -> str | bytes | dict | list | int | float | bool | None:
+        """Replace ${} strings in input with the values in the variables dict
+
+        Usage:
+            * $name or ${name} - return substituted value as string
+            * ${name:int}, ${name:float}, ${name:bool}, ${name:json}, ${name:str} - return the substituted value as a specific type
+            * ${name:file} - decode a base64 variable into bytes. File Content is stored as Base64 Encoded String in variables, logs...
+        Note: substitution texts for missing variable values remain unchanged in the output.
+        Note: unexpected data will raise exception.
+        When supplied, used_variables collects snapshots of substituted values.
+        """
+
+        variables = self.file_data.get("variables", {})
+        if isinstance(data, str):
+            variable_with_type_marker = re.fullmatch(r"\$\{([a-zA-Z_][a-zA-Z0-9_]*):([a-zA-Z_][a-zA-Z0-9_]*)\}", data)
+            if variable_with_type_marker:
+                variable_name, value_type = variable_with_type_marker.groups()
+                if value_type not in ("int", "float", "str", "json", "bool", "file"):
+                    raise ValueError(t(t.ERR_VARIABLE_SUBSTITUTION_TYPE, value_type=value_type))
+                if variable_name not in variables:
+                    return data
+                value = variables[variable_name]
+                if used_variables is not None:
+                    used_variables[variable_name] = deepcopy(value)
+                try:
+                    match value_type:
+                        case "int":
+                            return int(value)
+                        case "float":
+                            return float(value)
+                        case "str":
+                            return str(value)
+                        case "json":
+                            return json.loads(value)
+                        case "file":
+                            return base64.b64decode(value, validate=True)
+                        case "bool":
+                            if isinstance(value, bool):
+                                return value
+                            if isinstance(value, str) and value.strip().lower() in ("true", "false"):
+                                return value.strip().lower() == "true"
+                            raise ValueError(t(t.ERR_VARIABLE_TRUE_FALSE))
+                except (TypeError, ValueError, OverflowError) as error:
+                    raise ValueError(t(t.ERR_VARIABLE_CONVERSION, variable_name=variable_name, value_type=value_type)) from error
+            else:
+                data_as_template = Template(data)
+                data_substituted = data_as_template.safe_substitute(variables)
+                if used_variables is not None:
+                    for match in data_as_template.pattern.finditer(data):
+                        name = match.group("named") or match.group("braced")
+                        if name is not None and name in variables:
+                            used_variables[name] = deepcopy(variables[name])
+                return data_substituted
+
+        elif isinstance(data, dict):
+            return {self.substitute_variables(k, used_variables): self.substitute_variables(v, used_variables) for k, v in data.items()}
+        elif isinstance(data, list):
+            return [self.substitute_variables(v, used_variables) for v in data]
+        elif isinstance(data, (int, float, bool, type(None))):
+            return data
+        else:
+            raise Exception(t(t.ERR_VARIABLE_WRONG_TYPE, name=type(data).__name__))
 
     def delete_endpoint(self, id: int) -> None:
         """Delete an endpoint from the file data."""
@@ -321,6 +493,39 @@ class KrestBackend:
                     break
             return credential.get("id")
 
+    def delete_workflow(self, id: int) -> None:
+        """Delete a workflow from the file data."""
+
+        to_remove = next((d for d in self.file_data["workflows"] if d["id"] == id), None)
+
+        if to_remove:
+            self.file_data["workflows"].remove(to_remove)
+            self.dirty_bit = True
+            logging.info("Deleted workflow id=%s", id)
+
+    def save_workflow(self, workflow: Dict[str, Any]) -> int|None:
+        """Add a workflow to the file data."""
+
+        self.dirty_bit = True
+
+        if workflow.get("id") is None:
+            next_id = self.file_data["max_workflow_id"] + 1
+            new_workflow = workflow.copy()
+            new_workflow["created_at"] = datetime.now().isoformat()
+            new_workflow["id"] = next_id
+            self.file_data["workflows"].append(new_workflow)
+            self.file_data["max_workflow_id"] = next_id
+            logging.info("Created workflow id=%s", next_id)
+            return next_id
+        else:
+            for i, act_workflow in enumerate(self.file_data["workflows"]):
+                if act_workflow.get("id") == workflow.get("id"):
+                    workflow["updated_at"] = datetime.now().isoformat()
+                    self.file_data["workflows"][i].update(workflow)
+                    logging.info("Updated workflow id=%s", workflow.get("id"))
+                    break
+            return workflow.get("id")
+
     def get_endpoint(self, id: int) -> Dict[str, Any]|None:
         """Get an endpoint by its ID."""
         result = [endpoint for endpoint in self.file_data["endpoints"] if endpoint.get("id") == id]
@@ -329,6 +534,11 @@ class KrestBackend:
     def get_credential(self, id: int) -> Dict[str, Any]|None:
         """Get a credential by its ID."""
         result = [cred for cred in self.file_data["credentials"] if cred["id"] == id]
+        return result[0] if result else None
+
+    def get_workflow(self, id: int) -> Dict[str, Any]|None:
+        """Get a workflow by its ID."""
+        result = [workflow for workflow in self.file_data["workflows"] if workflow["id"] == id]
         return result[0] if result else None
 
     def select_file(self, file_path: str|None = None, file_password: str|None = None):
@@ -408,6 +618,9 @@ class KrestBackend:
             logging.warning("Cannot decrypt file path=%s", self.file_path)
             raise ValueError(t(t.ERR_INVALID_PASSWD))
         self.file_data = json.loads(json_bytes)
+        self.file_data.setdefault("variables", {})
+        self.file_data.setdefault("workflows", [])
+        self.file_data.setdefault("max_workflow_id", -1)
         logging.info("Loaded file path=%s", self.file_path)
 
         self.purge_call_history_older_than(self.file_data["settings"].get("history_retention_days", None))
@@ -438,8 +651,8 @@ class KrestBackend:
             self.dirty_bit = True
             self.file_data["call_history"] = retained_history
 
-    def save_history(self, call_type: str, endpoint_id: int, response: httpx.Response, endpoint: dict|None = None, credential: dict|None = None):
-        """Add a call with response to the History."""
+    def save_history(self, call_type: str, endpoint_id: int, response: httpx.Response, endpoint: dict|None = None, credential: dict|None = None, variables_curr: dict|None = None, variables_updated: dict|None = None):
+        """Add a call and its captured substituted variables to the History."""
 
         next_id = self.file_data["max_call_history_id"] + 1
 
@@ -452,8 +665,10 @@ class KrestBackend:
             "run_date": datetime.now().isoformat(),
             "endpoint": deepcopy(endpoint or {}),
             "credential": deepcopy(credential or {}),
+            "variables_curr": deepcopy(variables_curr or {}),
+            "variables_updated": deepcopy(variables_updated or {}),
             "elapsed_time": response.elapsed.total_seconds() if response.elapsed else 0,
-            # "response_url": str(response.url),
+            "response_url": str(response.url),
             "response_status_code": response.status_code,
             "response_reason_phrase": response.reason_phrase,
             "response_content_length": len(response.content) if response.content else 0,
@@ -478,14 +693,32 @@ class KrestBackend:
 
         return next_id
 
+    def run_workflow(self, workflow_id: int) -> None:
+        """Run the workflow steps."""
+        workflow = self.get_workflow(workflow_id)
+        if workflow is None:
+            raise ValueError(t(t.ERR_INVALID_WORKFLOW_ID, workflow_id=workflow_id))
+
+        for endpoint_id in workflow["steps"]:
+            logging.debug('workflow running id=' + str(endpoint_id) + '...')
+            self.run_endpoint(endpoint_id)
 
     def run_endpoint(self, endpoint_id):
+        """Call endpoint identified by id."""
+
+        ### backward compatibility, if variables missing:
+        try:
+            v = self.file_data["variables"]
+        except Exception:
+            self.file_data["variables"] = {}
+        ###
 
         logging.debug('prepare endpoint setup...')
         endpoint = self.get_endpoint(endpoint_id)
         if endpoint == None:
             logging.error("Cannot execute missing endpoint id=%s", endpoint_id)
             raise ValueError(t(t.ERR_INVALID_ENDPOINT_ID, endpoint_id=endpoint_id))
+
 
         def log_event(name):
             return lambda *args, **kwargs: None #developer_log(f"{time.time():.2f} - {name}")
@@ -496,26 +729,27 @@ class KrestBackend:
         transport = httpx.HTTPTransport(local_address="0.0.0.0")  # Force IPv4 transport
 
         auth = None
-        request_headers = deepcopy(endpoint.get("headers", {}))   # deapcopy readonly in run_endpoint
+        service_variables = {}
+        request_headers = self.substitute_variables(endpoint.get("headers", {}), service_variables)
 
         request_data_kwargs = {}
 
         match endpoint.get("body_type", None):
             case BodyType.JSON.value:
-                request_data_kwargs["json"] = deepcopy(endpoint.get("body"))   # deapcopy readonly in run_endpoint
+                request_data_kwargs["json"] = self.substitute_variables(endpoint.get("body"), service_variables)
             case BodyType.DATA.value:
                 # data=* attribute URL-encodes the dict: {"user": "john"} becomes user=john
-                request_data_kwargs["data"] = deepcopy(endpoint.get("body"))
+                request_data_kwargs["data"] = self.substitute_variables(endpoint.get("body"), service_variables)
             case BodyType.BINARY.value:
                 request_data_kwargs["content"] = base64.b64decode(endpoint.get("body"))
             case BodyType.TEXT.value:
-                request_data_kwargs["content"] = deepcopy(endpoint.get("body"))
+                request_data_kwargs["content"] = self.substitute_variables(endpoint.get("body"), service_variables)
             case BodyType.MULTIPART.value:
-                multipart = MultipartBody(deepcopy(endpoint.get("body")))
+                multipart = MultipartBody(self.substitute_variables(endpoint.get("body"), service_variables))
                 request_data_kwargs["files"] = multipart.get_parts()
             case _:
                 # for backward compatibility, we assume and set to Text type.
-                request_data_kwargs["content"] = deepcopy(endpoint.get("body"))
+                request_data_kwargs["content"] = self.substitute_variables(endpoint.get("body"), service_variables)
                 endpoint["body_type"] = BodyType.TEXT.value
 
         credential_id = endpoint.get("credential_id", None)
@@ -539,8 +773,9 @@ class KrestBackend:
 
         elif credential_type == CredentialType.OAUTH2.value:
 
-            token_body = credential.get("token_body", None)
-            token_headers = credential.get("token_headers", None)
+            token_variables = {}
+            token_body = self.substitute_variables(credential.get("token_body", None), token_variables)
+            token_headers = self.substitute_variables(credential.get("token_headers", None), token_variables)
 
             ### for backward compatibility with 1.0.2:
             if not token_body and not token_headers:
@@ -560,7 +795,7 @@ class KrestBackend:
                 logging.debug('token request...')
                 token_response = client.request(
                     method="POST",
-                    url=credential.get("token_url"),
+                    url=self.substitute_variables(credential.get("token_url"), token_variables),
                     auth=httpx.BasicAuth(credential.get("client_id"), credential.get("client_secret")),
                     timeout=endpoint.get("timeout"),
                     headers=token_headers,
@@ -570,7 +805,23 @@ class KrestBackend:
                 logging.debug('got token response.')
                 logging.info("OAuth2 token response endpoint_id=%s status=%s", endpoint_id, token_response.status_code)
 
-            self.save_history(t(t.TOKEN_REQUEST), endpoint_id, token_response, endpoint, credential)
+                logging.debug('convert token_response to dict...')
+                token_response_dict = self.response_to_dict(token_response)
+                logging.info('updating variables...')
+                variables_updated = {}
+                calculated_value = None
+                for variable_name, path in credential.get("set_variables", {}).items():
+                    logging.debug('calculate values...')
+                    try:
+                        calculated_value = get_value_by_path(token_response_dict, path)
+                    except Exception as e:
+                        logging.error('Failed to calculate variable %s expression: %r Error: %s', variable_name, path, e)
+                        calculated_value = "---ERROR---"
+
+                    variables_updated[variable_name] = calculated_value
+                    self.file_data["variables"][variable_name] = calculated_value
+
+            self.save_history(t(t.TOKEN_REQUEST), endpoint_id, token_response, endpoint, credential, variables_curr=token_variables, variables_updated=variables_updated)
             self.dirty_bit = True
             token_response.raise_for_status()
 
@@ -596,17 +847,34 @@ class KrestBackend:
             logging.info("Executing endpoint id=%s method=%s", endpoint_id, endpoint.get("method"))
             response = client.request(
                 method=endpoint.get("method"),
-                url=endpoint.get("url"),
+                url=self.substitute_variables(endpoint.get("url"), service_variables),
                 auth=auth,
                 timeout=endpoint.get("timeout"),
                 headers=request_headers,
-                params=endpoint.get("params"),
+                params=self.substitute_variables(endpoint.get("params"), service_variables),
                 follow_redirects=endpoint.get("follow_redirects"),
                 **request_data_kwargs
             )
             logging.info("Endpoint response id=%s status=%s", endpoint_id, response.status_code)
 
-        self.save_history(t(t.SERVICE_REQUEST), endpoint_id, response, endpoint, credential)
+        logging.debug('convert response to dict...')
+        response_dict = self.response_to_dict(response)
+        logging.info('updating variables...')
+        variables_updated = {}
+        calculated_value = None
+        for variable_name, path in endpoint.get("set_variables", {}).items():
+            logging.debug('calculate values...')
+            try:
+                calculated_value = get_value_by_path(response_dict, path)
+            except Exception as e:
+                logging.error('Failed to calculate variable %s expression: %r Error: %s', variable_name, path, e)
+                calculated_value = "---ERROR---"
+
+            variables_updated[variable_name] = calculated_value
+            self.file_data["variables"][variable_name] = calculated_value
+
+        logging.info('saving history...')
+        self.save_history(t(t.SERVICE_REQUEST), endpoint_id, response, endpoint, credential, variables_curr=service_variables, variables_updated=variables_updated)
         self.dirty_bit = True
         response.raise_for_status()
 

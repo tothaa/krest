@@ -529,7 +529,6 @@ def test_editor_boolean_settings_defaults_and_round_trip(editor_type, values):
     async def check():
         if editor_type == "endpoint":
             record = empty_endpoint()
-            editor = krest_tui.EndpointEditor(endpoint=record)
             apply_id = "#endpoint-apply-btn"
         else:
             credential_type = {
@@ -538,7 +537,6 @@ def test_editor_boolean_settings_defaults_and_round_trip(editor_type, values):
                 "oauth2": CredentialType.OAUTH2,
             }[editor_type]
             record = empty_credential(credential_type.value)
-            editor = krest_tui.CredentialEditor(credential=record)
             apply_id = "#credential-apply-btn"
 
         fields = ("follow_redirects", "ignore_proxy")
@@ -548,6 +546,9 @@ def test_editor_boolean_settings_defaults_and_round_trip(editor_type, values):
             else:
                 record[field] = values[index]
         expected = values if values is not None else (True, False)
+
+        editor = (krest_tui.EndpointEditor(endpoint=record) if editor_type == "endpoint"
+                  else krest_tui.CredentialEditor(credential=record))
 
         app = App()
         saved = []

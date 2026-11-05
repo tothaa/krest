@@ -1,1 +1,8 @@
-include src/qml/*.qml
+include packaging/unix/org.kde.krest.desktop
+include packaging/unix/org.kde.krest.file.desktop
+include packaging/unix/krest.xml
+include packaging/unix/krest.png
+include packaging/unix/application-x-krest.png
+include packaging/unix/krest-icon-dark2-256.png
+include packaging/windows/krest-windows-icon-dark2.ico
+include packaging/macos/krest.icns

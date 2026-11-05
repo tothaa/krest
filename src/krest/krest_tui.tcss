@@ -45,6 +45,10 @@ ModalScreen {
     content-align: right middle;
 }
 
+#endpoints-actions {
+    margin-bottom: 1;
+}
+
 LineDisplay{
     layout: horizontal;
     height: auto;
@@ -67,6 +71,10 @@ Button{
 
 Button:hover {
     border: round white;
+}
+
+EndpointEditor .multipart-actions Button:hover {
+    border: none;
 }
 
 .input-row-left {

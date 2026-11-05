@@ -2,6 +2,7 @@
 
 # import os
 # import gc
+import argparse
 import locale
 
 # import sys
@@ -15,19 +16,26 @@ import logging
 # from PySide6.QtCore import QUrl
 # from PySide6.QtQml import QQmlApplicationEngine
 
-from krest.krest_backend import setup_logging, KrestBackend
+from krest.krest_backend import  KrestBackend
 # from krest.translations import t
 
 
 lang, encoding = locale.getdefaultlocale()
 
 def qt():
+    parser = argparse.ArgumentParser(description="Krest Qt launcher")
+    parser.add_argument("--debug", "-d", action="store_true", help="Set backend debug level to 2")
+    parser.add_argument("--debug_level", type=int, metavar="INTEGER", help="Set backend debug level (overrides --debug)")
+    args = parser.parse_args()
+
+    logging.info("connct backend...")
+    backend = KrestBackend()
+    backend.debug_level = args.debug_level if args.debug_level is not None else (2 if args.debug else 0)
+
     # TODO: QT/Kirigami UI
 
     return "This feature is yet not implemented"
     
-    logging.info("connct backend...")
-    backend = KrestBackend()
     print("File version: " + backend.file_data["version"])
 
     app = QGuiApplication(sys.argv)
@@ -49,7 +57,7 @@ def qt():
     app.exec()
 
 def main():
-    setup_logging()
+
     logging.info("Start main()...")
 
     logging.info("start QT...")
@@ -60,3 +68,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+

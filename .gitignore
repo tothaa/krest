@@ -3,6 +3,7 @@
 dist
 .vscode
 __pycache__/
+__pycache__
 *.egg-info
 *.py[cod]
 *$py.class
@@ -43,4 +44,6 @@ cython_debug/
 __MACOSX
 data/
 .benchmarks/
+.benchmarks
 .env
+*.kate-swp

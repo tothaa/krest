@@ -1,0 +1,10 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=KREST - call REST endpoints with Faith
+Name[hu]=KREST
+Exec=krest-tui
+TryExec=krest-tui
+Icon=krest
+Type=Application
+Terminal=true
+Categories=Development;
